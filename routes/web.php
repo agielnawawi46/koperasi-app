@@ -17,4 +17,20 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/admin/dashboard', function () {
+    return view('admin.dashboard', ['role' => 'admin']);
+});
+
+Route::get('/pengurus/dashboard', function () {
+    return view('pengurus.dashboard', ['role' => 'pengurus']);
+});
+
+Route::get('/pengawas/dashboard', function () {
+    return view('pengawas.dashboard', ['role' => 'pengawas']);
+});
+
+Route::get('/anggota/dashboard', function () {
+    return view('anggota.dashboard', ['role' => 'anggota']);
+});
+
 require __DIR__.'/auth.php';
