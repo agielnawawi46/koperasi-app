@@ -1,40 +1,53 @@
 @extends('layouts.app')
-
+@section('sidebar')
+    @include('layouts.sidebar.admin')
+@endsection
 @section('content')
 
-<h1 class="text-2xl font-bold mb-6">Dashboard Admin</h1>
+<!-- Wrapper Background -->
+<div class="bg-gray-100 p-6 min-h-screen">
 
-<div class="grid grid-cols-4 gap-4 mb-6">
+    <!-- Statistik Ringkas -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 
-    <div class="bg-blue-600 text-white p-4 rounded-xl shadow">
-        <p>Total Anggota</p>
-        <h2 class="text-xl font-bold">1,250</h2>
+        <div class="bg-white p-6 rounded-2xl shadow-lg border-l-4 border-blue-600">
+            <p class="text-gray-500">Total Organisasi</p>
+            <h2 class="text-2xl font-bold text-blue-600">12</h2>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-lg border-l-4 border-green-600">
+            <p class="text-gray-500">Total User</p>
+            <h2 class="text-2xl font-bold text-green-600">325</h2>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-lg border-l-4 border-yellow-500">
+            <p class="text-gray-500">Sistem Aktif</p>
+            <h2 class="text-2xl font-bold text-yellow-600">Aktif</h2>
+        </div>
+
     </div>
 
-    <div class="bg-green-600 text-white p-4 rounded-xl shadow">
-        <p>Total Simpanan</p>
-        <h2 class="text-xl font-bold">Rp 3 M</h2>
+    <!-- Grafik Aktivitas -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+
+        <div class="bg-white p-6 rounded-2xl shadow-lg">
+            <h2 class="font-semibold mb-4 text-gray-700">Sistem Aktivitas Hari Ini</h2>
+            <canvas id="activityTodayChart"></canvas>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-lg">
+            <h2 class="font-semibold mb-4 text-gray-700">Sistem Aktivitas Terbaru</h2>
+            <canvas id="activityRecentChart"></canvas>
+        </div>
+
     </div>
 
-    <div class="bg-yellow-500 text-white p-4 rounded-xl shadow">
-        <p>Total Pinjaman</p>
-        <h2 class="text-xl font-bold">Rp 1.5 M</h2>
+    <!-- Statistik Penggunaan Sistem -->
+    <div class="bg-white p-6 rounded-2xl shadow-lg">
+        <h2 class="font-semibold mb-4 text-gray-700">Statistik Penggunaan Sistem</h2>
+        <canvas id="systemUsageChart"></canvas>
     </div>
 
-    <div class="bg-gray-700 text-white p-4 rounded-xl shadow">
-        <p>SHU Tahun Ini</p>
-        <h2 class="text-xl font-bold">Rp 200 JT</h2>
-    </div>
-
-</div>
-
-<div class="bg-white p-4 rounded-xl shadow">
-    <h2 class="font-bold mb-3">Aktivitas Terbaru</h2>
-    <ul class="space-y-2 text-sm">
-        <li>✔ Anggota baru mendaftar</li>
-        <li>✔ Pinjaman disetujui</li>
-        <li>✔ Pembayaran cicilan masuk</li>
-    </ul>
 </div>
 
 @endsection

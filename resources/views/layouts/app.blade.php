@@ -1,41 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>DanaKarya</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DanaKarya - Dashboard</title>
     @vite('resources/css/app.css')
 </head>
+
 <body class="bg-gray-100">
+<div class="flex min-h-screen">
 
-    {{-- HEADER --}}
-    @include('layouts.partials.header')
+    {{-- Sidebar akan diisi oleh layout turunan --}}
+    @yield('sidebar')
 
-    <div class="flex">
+    <!-- Konten -->
+    <div class="flex-1 flex flex-col">
 
-        {{-- SIDEBAR --}}
-        @php
-            $role = $role ?? 'nulls'; // dummy role
-        @endphp
+        @include('layouts.partials.header')
 
-        @if($role == 'admin')
-            @include('layouts.sidebar.admin')
-        @elseif($role == 'pengurus')
-            @include('layouts.sidebar.pengurus')
-        @elseif($role == 'pengawas')
-            @include('layouts.sidebar.pengawas')
-        @elseif($role == 'anggota')
-            @include('layouts.sidebar.anggota')
-        @endif
-
-        {{-- CONTENT --}}
         <main class="flex-1 p-6">
             @yield('content')
         </main>
 
+        @include('layouts.partials.footer')
+
     </div>
-
-    {{-- FOOTER --}}
-    @include('layouts.partials.footer')
-
+</div>
 </body>
 </html>

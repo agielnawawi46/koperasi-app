@@ -1,52 +1,69 @@
+<!-- resources/views/auth/register.blade.php -->
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+    <div class="min-h-screen flex items-center justify-center bg-gray-100 p-6">
+        <!-- Container utama: logo + form -->
+        <div class="flex flex-col md:flex-row items-center bg-white shadow-xl rounded-lg p-8 w-full max-w-4xl">
+            
+            <!-- Logo + Tagline -->
+            <div class="flex flex-col items-center justify-center md:w-1/2 mb-6 md:mb-0 md:pr-8 border-b md:border-b-0 md:border-r">
+                <img src="{{ asset('images/dn.png') }}" alt="DanaKarya Logo" class="h-60 mb-4">
+                <p class="text-gray-500 text-xs mt-1 text-center max-w-xs">
+                    Platform Koperasi Modern
+                </p>
+                <p class="text-gray-500 text-xs mt-1 text-center max-w-xs">
+                    yang Transparan dan Terpercaya
+                </p>
+            </div>
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+            <!-- Card Form -->
+            <div class="md:w-1/2 w-full md:pl-8">
+                <h2 class="text-xl font-bold text-center mb-6 text-green-700">Buat Akun Admin</h2>
+
+                <form>
+                    <!-- Nama Lengkap -->
+                    <div class="mb-4">
+                        <label for="name" class="block text-gray-700 font-medium mb-1">Nama Lengkap</label>
+                        <input id="name" type="text" name="name"
+                               class="w-full px-3 py-2 border rounded-lg focus:ring focus:ring-green-300"
+                               placeholder="Masukkan nama lengkap">
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-4">
+                        <label for="email" class="block text-gray-700 font-medium mb-1">Email</label>
+                        <input id="email" type="email" name="email"
+                               class="w-full px-3 py-2 border rounded-lg focus:ring focus:ring-green-300"
+                               placeholder="Masukkan email Anda">
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-4">
+                        <label for="password" class="block text-gray-700 font-medium mb-1">Password</label>
+                        <input id="password" type="password" name="password"
+                               class="w-full px-3 py-2 border rounded-lg focus:ring focus:ring-green-300"
+                               placeholder="Minimal 8 karakter">
+                    </div>
+
+                    <!-- Konfirmasi Password -->
+                    <div class="mb-5">
+                        <label for="password_confirmation" class="block text-gray-700 font-medium mb-1">Konfirmasi Password</label>
+                        <input id="password_confirmation" type="password" name="password_confirmation"
+                               class="w-full px-3 py-2 border rounded-lg focus:ring focus:ring-green-300"
+                               placeholder="Ulangi password">
+                    </div>
+
+                    <!-- Tombol -->
+                    <button type="submit"
+                            class="w-full bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition">
+                        Daftar
+                    </button>
+
+                    <!-- Link ke Login -->
+                    <p class="text-sm text-center mt-4 text-gray-500">
+                        Sudah punya akun? <a href="{{ route('login') }}" class="text-green-600 hover:underline">Login disini</a>
+                    </p>
+                </form>
+            </div>
         </div>
-
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
+    </div>
 </x-guest-layout>

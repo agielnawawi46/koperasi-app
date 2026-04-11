@@ -1,9 +1,8 @@
-<footer class="bg-gradient-to-r p-4 from-blue-800 to-green-600 text-white mt-6">
+<footer class="bg-white shadow text-black mt-6">
 
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center text-sm">
+    <div class="p-5 flex justify-between items-center text-sm">
 
         <p>
-            © {{ date('Y') }} <span class="font-semibold">DanaKarya</span>
         </p>
 
         <div class="flex gap-4">

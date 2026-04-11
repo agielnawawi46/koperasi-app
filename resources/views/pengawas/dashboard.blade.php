@@ -1,5 +1,7 @@
 @extends('layouts.app')
-
+@section('sidebar')
+    @include('layouts.sidebar.pengawas')
+@endsection
 @section('content')
 
 <h1 class="text-2xl font-bold mb-6">Dashboard Pengawas</h1>
