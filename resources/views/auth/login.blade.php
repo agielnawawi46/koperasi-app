@@ -1,53 +1,75 @@
-<!-- resources/views/auth/login.blade.php -->
 <x-guest-layout>
-    <div class="min-h-screen flex items-center justify-center bg-gray-100 p-6">
-        <!-- Container utama: logo + form -->
-        <div class="flex flex-col md:flex-row items-center bg-white shadow-xl rounded-lg p-8 w-full max-w-4xl">
+    <div class="min-h-screen flex items-center justify-center bg-[#f4f7fa] p-6">
+        
+        <div class="flex flex-col lg:flex-row bg-white shadow-[0_40px_100px_-20px_rgba(0,0,0,0.1)] rounded-[3rem] overflow-hidden w-full max-w-5xl border border-slate-100">
             
-            <!-- Logo + Tagline -->
-            <div class="flex flex-col items-center justify-center md:w-1/2 mb-6 md:mb-0 md:pr-8 border-b md:border-b-0 md:border-r">
-                <img src="{{ asset('images/dn.png') }}" alt="DanaKarya Logo" class="h-60 mb-4">
-                <p class="text-gray-500 text-xs mt-1 text-center max-w-xs">
-                    Platform Koperasi Modern
-                </p>
-                <p class="text-gray-500 text-xs mt-1 text-center max-w-xs">
-                    yang Transparan dan Terpercaya
-                </p>
+            <div class="lg:w-1/2 bg-white flex flex-col items-center justify-center p-12 lg:p-20 relative">
+                {{-- Soft Background Pattern --}}
+                <div class="absolute inset-0 opacity-[0.03]" style="background-image: radial-gradient(#1e293b 1px, transparent 1px); background-size: 24px 24px;"></div>
+                
+                <div class="relative z-10 text-center space-y-8">
+                    {{-- Logo Asli Tanpa Modifikasi --}}
+                    <div class="transition-all duration-700 hover:scale-105">
+                        <img src="{{ asset('images/dn.png') }}" alt="DanaKarya Logo" class="h-44 md:h-64 w-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)]">
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <div class="h-1 w-12 bg-blue-600 mx-auto rounded-full"></div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.4em] pt-2">Digital Cooperatives</p>
+                    </div>
+                </div>
             </div>
 
-            <!-- Card Form -->
-            <div class="md:w-1/2 w-full md:pl-8">
-                <h2 class="text-xl font-bold text-center mb-6 text-green-700">Login</h2>
-
-                <form>
-                    <!-- Email -->
-                    <div class="mb-4">
-                        <label for="email" class="block text-gray-700 font-medium mb-1">Email</label>
-                        <input id="email" type="email" name="email"
-                               class="w-full px-3 py-2 border rounded-lg focus:ring focus:ring-green-300"
-                               placeholder="Masukkan email Anda">
+            <div class="lg:w-1/2 bg-slate-50/50 p-10 lg:p-16 border-l border-slate-100 flex flex-col justify-center">
+                <div class="max-w-sm mx-auto w-full space-y-10">
+                    
+                    <div class="text-center lg:text-left">
+                        <h3 class="text-3xl font-black text-slate-900 tracking-tighter">Login.</h3>
+                        <p class="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mt-2">Selamat datang kembali di sistem kami</p>
                     </div>
 
-                    <!-- Password -->
-                    <div class="mb-5">
-                        <label for="password" class="block text-gray-700 font-medium mb-1">Password</label>
-                        <input id="password" type="password" name="password"
-                               class="w-full px-3 py-2 border rounded-lg focus:ring focus:ring-green-300"
-                               placeholder="Masukkan password">
-                    </div>
+                    <form method="POST" action="{{ route('login') }}" class="space-y-6">
+                        @csrf
 
-                    <!-- Tombol -->
-                    <button type="submit"
-                            class="w-full bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition">
-                        Login
-                    </button>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Email Identifier</label>
+                            <input id="email" type="email" name="email" required autofocus
+                                class="w-full bg-white border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold text-slate-700 focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all shadow-sm"
+                                placeholder="Masukkan email anda">
+                        </div>
 
-                    <!-- Link ke Register -->
-                    <p class="text-sm text-center mt-4 text-gray-500">
-                        Belum punya akun? <a href="{{ route('register') }}" class="text-green-600 hover:underline">Daftar disini</a>, hanya admin
-                    </p>
-                </form>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center px-1">
+                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Password</label>
+                            </div>
+                            <input id="password" type="password" name="password" required
+                                class="w-full bg-white border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold text-slate-700 focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all shadow-sm"
+                                placeholder="••••••••">
+                        </div>
+
+                        <div class="flex items-center justify-between px-1">
+                            <label class="flex items-center cursor-pointer group">
+                                <input type="checkbox" name="remember" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-0">
+                                <span class="ms-2 text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-slate-600 transition-colors">Ingat Saya</span>
+                            </label>
+                            <a href="{{ route('password.request') }}" class="text-[9px] font-black text-blue-600 uppercase tracking-widest hover:underline underline-offset-4">Bantuan Login?</a>
+                        </div>
+
+                        <button type="submit"
+                            class="w-full bg-slate-900 text-white py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.4em] hover:bg-blue-600 transition-all shadow-lg shadow-blue-900/10">
+                            Masuk Ke Sistem
+                        </button>
+
+                        <div class="pt-8 text-center">
+                            <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                Belum terdaftar? 
+                                <a href="{{ route('register') }}" class="text-slate-900 hover:text-blue-600 font-black transition-colors">Daftar Admin</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
             </div>
+
         </div>
     </div>
 </x-guest-layout>

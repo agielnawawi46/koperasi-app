@@ -6,7 +6,7 @@
     <title>DanaKarya - Dashboard</title>
     @vite('resources/css/app.css')
 </head>
-
+<script src="//unpkg.com/alpinejs" defer></script>
 <body class="bg-gray-100">
 <div class="flex min-h-screen">
 
