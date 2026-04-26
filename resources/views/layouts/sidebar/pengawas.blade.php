@@ -4,9 +4,9 @@
     <div class="h-24 flex items-center px-8 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-10">
         <div class="flex items-center gap-3">
             <div class="p-2 bg-white rounded-full shadow-lg shadow-blue-500/10">
-                <img 
-                    src="{{ asset('images/logdanacdr.png') }}" 
-                    alt="DanaKarya Logo" 
+                <img
+                    src="{{ asset('images/logdanacdr.png') }}"
+                    alt="DanaKarya Logo"
                     class="h-10 w-10 object-contain"
                 >
             </div>
@@ -19,7 +19,7 @@
 
     {{-- ================= NAVIGATION ================= --}}
     <nav class="flex-1 px-6 py-8 space-y-2 overflow-y-auto custom-scrollbar">
-        
+
         <p class="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-4">Pengawasan</p>
 
         @php
@@ -38,7 +38,7 @@
         @endphp
 
         @foreach($supervisorMenus as $menu)
-        <a href="{{ $url = $menu['url'] }}" 
+        <a href="{{ $url = $menu['url'] }}"
            class="group flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all duration-300 {{ request()->is(trim($url, '/').'*') ? 'bg-blue-600 text-white shadow-xl shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
             <svg class="w-5 h-5 transition-transform duration-300 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $menu['icon'] }}" />
@@ -65,7 +65,7 @@
         @endphp
 
         @foreach($financeMenus as $menu)
-        <a href="{{ $url = $menu['url'] }}" 
+        <a href="{{ $url = $menu['url'] }}"
            class="group flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all duration-300 {{ request()->is(trim($url, '/').'*') ? 'bg-blue-600 text-white shadow-xl shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
             <svg class="w-5 h-5 transition-transform duration-300 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $menu['icon'] }}" />
@@ -80,7 +80,7 @@
 
         <p class="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-4">Finalisasi</p>
 
-        <a href="/supervisor/laporan-shu" 
+        <a href="/supervisor/laporan-shu"
            class="group flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all duration-300 {{ request()->is('supervisor/laporan-shu*') ? 'bg-blue-600 text-white shadow-xl shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
             <svg class="w-5 h-5 transition-transform duration-300 group-hover:rotate-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />

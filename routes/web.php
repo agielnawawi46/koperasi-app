@@ -23,10 +23,10 @@ Route::prefix('pengawas')->group(function () {
 
 Route::prefix('admin')->group(function () {
     Route::get('/dashboard', fn()=>view('admin.dashboard.index'))->name('admin.dashboard');
-    
+
     // Rute Organisasi
     Route::get('/organisasi', fn()=>view('admin.organisasi.index'))->name('organisasi.index');
-    
+
     // TAMBAHKAN INI: Agar form pendaftaran & update bisa berfungsi
     Route::post('/organisasi', function() {
         // Logika simpan data sementara (Anda nanti perlu memindahkan ini ke Controller)
@@ -61,5 +61,14 @@ Route::prefix('pengurus')->group(function () {
     Route::get('/inpangsuran', fn()=>view('pengurus.inpangsuran.index'))->name('pengurus.inpangsuran');
     Route::get('/lapharian', fn()=>view('pengurus.lapharian.index'))->name('pengurus.lapharian');
     Route::get('/monitoring', fn()=>view('pengurus.monitoring.index'))->name('pengurus.monitoring');
+});
+
+Route::prefix('pengawas')->group(function () {
+    Route::get('/dashboard', fn()=>view('pengawas.dashboard.index'))->name('pengawas.dashboard');
+    Route::get('/audpinjaman', fn()=>view('pengawas.audpinjaman.index'))->name('pengawas.audpinjaman');
+    Route::get('/audsimpanan', fn()=>view('pengawas.audsimpanan.index'))->name('pengawas.audsimpanan');
+    Route::get('/dataangsuran', fn()=>view('pengawas.dataangsuran.index'))->name('pengawas.dataangsuran');
+    Route::get('/rekapangsuran', fn()=>view('pengawas.rekapangsuran.index'))->name('pengawas.rekapangsuran');
+    Route::get('/laporanshu', fn()=>view('pengawas.laporannshu.index'))->name('pengawas.laporannshu');
 });
 require __DIR__.'/auth.php';
