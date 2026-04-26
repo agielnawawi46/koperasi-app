@@ -17,16 +17,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/pengurus/dashboard', function () {
-    return view('pengurus.dashboard', ['role' => 'pengurus']);
-});
-
-Route::get('/pengawas/dashboard', function () {
-    return view('pengawas.dashboard', ['role' => 'pengawas']);
-});
-
-Route::get('/anggota/dashboard', function () {
-    return view('anggota.dashboard', ['role' => 'anggota']);
+Route::prefix('pengawas')->group(function () {
+    Route::get('/dashboard', fn()=>view('pengawas.dashboard.index'))->name('pengawas.dashboard');
 });
 
 Route::prefix('admin')->group(function () {
@@ -57,7 +49,7 @@ Route::prefix('anggota')->group(function () {
     Route::get('/dashboard', fn()=>view('anggota.dashboard.index'))->name('anggota.dashboard');
     Route::get('/simpanan', fn()=>view('anggota.simpanan.index'))->name('anggota.simpanan');
     Route::get('/pinjaman', fn()=>view('anggota.pinjaman.index'))->name('anggota.pinjaman');
-    Route::get('/angsuran', fn()=>view('anggota.angsuran.index'))->name('angsuran.pinjaman');
+    Route::get('/angsuran', fn()=>view('anggota.angsuran.index'))->name('anggota.angsuran');
     Route::get('/shu', fn()=>view('anggota.shu.index'))->name('anggota.shu');
     Route::get('/profil', fn()=>view('anggota.profil.index'))->name('anggota.profil');
 });
