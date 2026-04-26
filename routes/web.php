@@ -67,8 +67,8 @@ Route::prefix('pengawas')->group(function () {
     Route::get('/dashboard', fn()=>view('pengawas.dashboard.index'))->name('pengawas.dashboard');
     Route::get('/audpinjaman', fn()=>view('pengawas.audpinjaman.index'))->name('pengawas.audpinjaman');
     Route::get('/audsimpanan', fn()=>view('pengawas.audsimpanan.index'))->name('pengawas.audsimpanan');
-    Route::get('/dataangsuran', fn()=>view('pengawas.dataangsuran.index'))->name('pengawas.dataangsuran');
+    Route::get('/dataanggota', fn()=>view('pengawas.dataanggota.index'))->name('pengawas.dataanggota');
     Route::get('/rekapangsuran', fn()=>view('pengawas.rekapangsuran.index'))->name('pengawas.rekapangsuran');
-    Route::get('/laporanshu', fn()=>view('pengawas.laporannshu.index'))->name('pengawas.laporannshu');
+    Route::get('/laporannshu', fn()=>view('pengawas.laporannshu.index'))->name('pengawas.laporannshu');
 });
 require __DIR__.'/auth.php';
