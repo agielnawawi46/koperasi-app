@@ -23,6 +23,26 @@
             <div class="lg:w-1/2 bg-slate-50/50 p-10 lg:p-16 border-l border-slate-100 flex flex-col justify-center">
                 <div class="max-w-sm mx-auto w-full space-y-10">
                     
+                    @if (session('status'))
+                        <div class="bg-emerald-50 border border-emerald-200 rounded-2xl px-6 py-4 text-emerald-700 text-sm font-bold shadow-sm">
+                            {{ session('status') }}
+                        </div>
+                    @endif
+
+                    @if (session('error'))
+                        <div class="bg-red-50 border border-red-200 rounded-2xl px-6 py-4 text-red-600 text-sm font-bold shadow-sm">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
+                    @if ($errors->any())
+                        <div class="bg-red-50 border border-red-200 rounded-2xl px-6 py-4 text-red-600 text-sm font-bold shadow-sm">
+                            @foreach ($errors->all() as $error)
+                                <p>{{ $error }}</p>
+                            @endforeach
+                        </div>
+                    @endif
+
                     <div class="text-center lg:text-left">
                         <h3 class="text-3xl font-black text-slate-900 tracking-tighter">Login.</h3>
                         <p class="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mt-2">Selamat datang kembali di sistem kami</p>
@@ -62,8 +82,8 @@
 
                         <div class="pt-8 text-center">
                             <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">
-                                Belum terdaftar? 
-                                <a href="{{ route('register') }}" class="text-slate-900 hover:text-blue-600 font-black transition-colors">Daftar Admin</a>
+                                Belum punya akun super admin? 
+                                <a href="{{ route('register') }}" class="text-slate-900 hover:text-blue-600 font-black transition-colors">Daftar Sekarang</a>
                             </p>
                         </div>
                     </form>

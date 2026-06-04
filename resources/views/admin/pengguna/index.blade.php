@@ -6,19 +6,30 @@
 
 @section('content')
 
-<div x-data="userManager()" class="px-8 py-8 bg-[#f8fafc] min-h-screen space-y-8">
+<div x-data="userManager()" class="px-8 py-8 bg-[#f8fafc] min-h-screen space-y-8 animate-fade-in">
+
+    @if (session('success'))
+        <div class="bg-emerald-50 border border-emerald-200 rounded-2xl px-6 py-4 text-emerald-700 text-sm font-black shadow-sm flex items-center gap-3">
+            <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="bg-red-50 border border-red-200 rounded-2xl px-6 py-4 text-red-600 text-sm font-black shadow-sm flex items-center gap-3">
+            <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            {{ session('error') }}
+        </div>
+    @endif
 
     {{-- ================= HEADER ================= --}}
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-            <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Manajemen Pengguna</h1>
+            <h1 class="text-3xl font-black text-slate-800 tracking-tight">Manajemen Pengguna</h1>
             <p class="text-slate-500 mt-1 font-medium">Kelola akses dan otoritas akun berdasarkan kategori role.</p>
         </div>
-        <div class="flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-100 rounded-2xl text-blue-700 text-sm font-semibold">
-            <span class="relative flex h-2 w-2">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-            </span>
+        <div class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-blue-50 text-blue-700 text-[10px] font-black rounded-xl border border-blue-100 uppercase tracking-wide">
+            <span class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
             Sistem Aktif
         </div>
     </div>
@@ -91,28 +102,31 @@
             {{-- List User Scrollable --}}
             <div class="flex-1 overflow-y-auto px-10 py-8 space-y-4 custom-scrollbar">
                 <template x-for="(user, index) in filteredUsers" :key="index">
-                    <div class="p-6 bg-slate-50/50 border border-slate-100 rounded-[2rem] flex flex-col md:flex-row justify-between items-center gap-4 hover:border-blue-200 hover:bg-white hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-300 group">
+                    <div class="p-6 bg-white border border-slate-100 rounded-[2.5rem] flex flex-col md:flex-row justify-between items-center gap-4 hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-300 group">
                         <div class="flex items-center gap-5 w-full">
-                            <div class="w-14 h-14 rounded-[1.25rem] bg-white shadow-sm flex items-center justify-center font-black text-blue-600 text-xl border border-slate-100" x-text="user.name.charAt(0)"></div>
+                            <div class="w-14 h-14 bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl flex items-center justify-center font-black text-slate-600 group-hover:from-blue-600 group-hover:to-blue-700 group-hover:text-white transition-all duration-300 shadow-sm" x-text="user.name.charAt(0)"></div>
                             <div class="flex-1">
-                                <p class="font-bold text-slate-800 text-lg leading-tight" x-text="user.name"></p>
+                                <p class="font-black text-slate-800 text-lg leading-tight" x-text="user.name"></p>
                                 <div class="flex items-center gap-3 mt-1.5">
                                     <p class="text-sm font-medium text-slate-400" x-text="user.email"></p>
                                     <span class="w-1 h-1 rounded-full bg-slate-300"></span>
-                                    <span class="text-[10px] px-2.5 py-1 rounded-lg font-black uppercase tracking-widest"
-                                        :class="user.status == 'aktif' ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'"
-                                        x-text="user.status"></span>
+                                    <span class="inline-flex items-center gap-1.5 px-4 py-1.5 text-[10px] font-black rounded-xl border uppercase tracking-wide"
+                                        :class="user.status == 'aktif' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-rose-50 text-rose-700 border-rose-100'"
+                                        x-text="user.status">
+                                        <span class="w-1.5 h-1.5 rounded-full"
+                                            :class="user.status == 'aktif' ? 'bg-emerald-500' : 'bg-rose-500'"></span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="flex gap-2 w-full md:w-auto opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
-                            <button @click="editUser(user, index)" class="flex-1 md:flex-none px-5 py-2.5 text-xs font-black uppercase tracking-widest text-blue-600 bg-white border border-blue-100 rounded-xl hover:bg-blue-600 hover:text-white transition-all">Edit</button>
-                            <button @click="toggleStatus(index)" class="flex-1 md:flex-none px-5 py-2.5 text-xs font-black uppercase tracking-widest rounded-xl border transition-all"
-                                :class="user.status == 'aktif' ? 'text-amber-600 border-amber-100 bg-white hover:bg-amber-600 hover:text-white' : 'text-emerald-600 border-emerald-100 bg-white hover:bg-emerald-600 hover:text-white'"
+                        <div class="flex gap-2 w-full md:w-auto">
+                            <button @click="editUser(user, index)" class="px-5 py-2.5 text-xs font-black uppercase tracking-widest text-blue-600 bg-blue-50 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm active:scale-90">Edit</button>
+                            <button @click="toggleStatus(index)" class="px-5 py-2.5 text-xs font-black uppercase tracking-widest rounded-xl transition-all shadow-sm active:scale-90"
+                                :class="user.status == 'aktif' ? 'text-amber-600 bg-amber-50 hover:bg-amber-600 hover:text-white' : 'text-emerald-600 bg-emerald-50 hover:bg-emerald-600 hover:text-white'"
                                 x-text="user.status == 'aktif' ? 'Suspend' : 'Re-Active'">
                             </button>
-                            <button @click="deleteUser(index)" class="flex-1 md:flex-none px-5 py-2.5 text-xs font-black uppercase tracking-widest text-rose-500 bg-white border border-rose-100 hover:bg-rose-500 hover:text-white rounded-xl transition-all">Hapus</button>
+                            <button @click="deleteUser(index)" class="px-5 py-2.5 text-xs font-black uppercase tracking-widest text-rose-500 bg-rose-50 hover:bg-rose-500 hover:text-white rounded-xl transition-all shadow-sm active:scale-90">Hapus</button>
                         </div>
                     </div>
                 </template>
@@ -141,7 +155,7 @@
              class="bg-white w-full max-w-md rounded-[2.5rem] p-10 shadow-2xl border border-white/20">
             
             <div class="mb-10 text-center">
-                <div class="w-20 h-20 bg-blue-50 text-blue-600 rounded-[2rem] flex items-center justify-center mx-auto mb-5 shadow-lg shadow-blue-100/50">
+                <div class="w-20 h-20 bg-blue-50 text-blue-600 rounded-[2.5rem] flex items-center justify-center mx-auto mb-5 shadow-lg shadow-blue-100/50">
                     <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                 </div>
                 <h2 class="font-black text-2xl text-slate-800" x-text="formMode"></h2>
@@ -151,15 +165,15 @@
             <div class="space-y-6">
                 <div class="space-y-2">
                     <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Nama Lengkap</label>
-                    <input x-model="form.name" type="text" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all font-bold text-slate-700 placeholder:font-medium" placeholder="Contoh: Ahmad Faisal">
+                    <input x-model="form.name" type="text" class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 transition-all placeholder:font-medium" placeholder="Contoh: Ahmad Faisal">
                 </div>
                 <div class="space-y-2">
                     <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Alamat Email Resmi</label>
-                    <input x-model="form.email" type="email" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all font-bold text-slate-700 placeholder:font-medium" placeholder="email@koperasi.com">
+                    <input x-model="form.email" type="email" class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 transition-all placeholder:font-medium" placeholder="email@koperasi.com">
                 </div>
                 <div class="space-y-2">
                     <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Kata Sandi Akun</label>
-                    <input type="password" x-model="form.password" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all font-bold text-slate-700 placeholder:font-medium" placeholder="••••••••">
+                    <input type="password" x-model="form.password" class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 transition-all placeholder:font-medium" placeholder="••••••••">
                 </div>
             </div>
 
@@ -183,6 +197,8 @@
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
     .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+    @keyframes fade-in { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fade-in 0.6s ease-out forwards; }
 </style>
 
 <script>
@@ -217,12 +233,7 @@ function userManager() {
             }
         ],
 
-        users: [
-            { name: 'Admin Utama', email: 'admin@mail.com', role: 'Admin', status: 'aktif' },
-            { name: 'Sari Rahayu', email: 'sari@mail.com', role: 'Pengurus', status: 'aktif' },
-            { name: 'Ahmad Kurniawan', email: 'ahmad@mail.com', role: 'Pengawas', status: 'nonaktif' },
-            { name: 'Budi Santoso', email: 'budi@mail.com', role: 'Anggota', status: 'aktif' }
-        ],
+        users: @json($users ?? []),
 
         form: { name: '', email: '', password: '' },
 
@@ -247,22 +258,21 @@ function userManager() {
         },
 
         saveUser() {
+            const formData = new FormData();
+            formData.append('name', this.form.name);
+            formData.append('email', this.form.email);
+            formData.append('password', this.form.password);
+            formData.append('role', this.currentRole);
+            formData.append('_token', '{{ csrf_token() }}');
+
             if (this.editIndex !== null) {
-                // Update Logic
-                const userEmail = this.filteredUsers[this.editIndex].email;
-                const originalIndex = this.users.findIndex(u => u.email === userEmail);
-                this.users[originalIndex] = {
-                    ...this.form,
-                    role: this.currentRole,
-                    status: this.users[originalIndex].status
-                }
+                formData.append('_method', 'PUT');
+                const userId = this.filteredUsers[this.editIndex].id;
+                fetch('/admin/pengguna/' + userId, { method: 'POST', body: formData })
+                    .then(() => location.reload());
             } else {
-                // Create Logic
-                this.users.push({
-                    ...this.form,
-                    role: this.currentRole,
-                    status: 'aktif'
-                })
+                fetch('/admin/pengguna', { method: 'POST', body: formData })
+                    .then(() => location.reload());
             }
             this.formOpen = false
         },
@@ -275,15 +285,22 @@ function userManager() {
         },
 
         toggleStatus(index) {
-            const userEmail = this.filteredUsers[index].email;
-            const originalIndex = this.users.findIndex(u => u.email === userEmail);
-            this.users[originalIndex].status = this.users[originalIndex].status === 'aktif' ? 'nonaktif' : 'aktif'
+            const userId = this.filteredUsers[index].id;
+            const formData = new FormData();
+            formData.append('_method', 'PATCH');
+            formData.append('_token', '{{ csrf_token() }}');
+            fetch('/admin/pengguna/' + userId + '/status', { method: 'POST', body: formData })
+                .then(() => location.reload());
         },
 
         deleteUser(index) {
             if(confirm('Hapus user ini secara permanen?')) {
-                const userEmail = this.filteredUsers[index].email;
-                this.users = this.users.filter(u => u.email !== userEmail);
+                const userId = this.filteredUsers[index].id;
+                const formData = new FormData();
+                formData.append('_method', 'DELETE');
+                formData.append('_token', '{{ csrf_token() }}');
+                fetch('/admin/pengguna/' + userId, { method: 'POST', body: formData })
+                    .then(() => location.reload());
             }
         }
     }

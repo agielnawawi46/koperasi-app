@@ -6,13 +6,13 @@
 
 @section('content')
 
-<div x-data="{ openModal: false, selectedMonth: 'Januari 2026' }" class="px-8 py-8 bg-[#f8fafc] min-h-screen space-y-8">
+<div x-data="{ openModal: false, selectedMonth: 'Januari 2026' }" class="px-8 py-8 bg-[#f8fafc] min-h-screen space-y-8 animate-fade-in">
 
     {{-- ================= HEADER & GREETING ================= --}}
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div class="flex items-center gap-4">
             <div>
-                <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Dashboard Anggota</h1>
+                <h1 class="text-3xl font-black text-slate-800 tracking-tight">Dashboard Anggota</h1>
                 <p class="text-slate-500 font-medium">Selamat datang kembali, berikut ringkasan saldo Anda hari ini.</p>
             </div>
         </div>
@@ -22,57 +22,60 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         
         {{-- Total Simpanan --}}
-        <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 relative overflow-hidden group">
+        <div class="group relative bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-500">
             <div class="absolute top-0 right-0 w-32 h-32 bg-green-50 rounded-bl-[80px] -z-0 transition-all duration-500 group-hover:scale-110 group-hover:bg-green-100"></div>
             <div class="relative z-10 space-y-6">
-                <div class="flex items-center justify-between gap-4">
-                    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Total Simpanan</p>
-                    <div class="p-3 bg-green-100 text-green-600 rounded-2xl">
+                <div class="flex items-center justify-between">
+                    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-green-700 transition-colors">Total Simpanan</p>
+                    <div class="p-4 bg-green-100 text-green-600 rounded-2xl shadow-sm">
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
                 </div>
-                <h2 class="text-3xl font-black text-slate-800">Rp 10.000.000</h2>
-                <div class="items-center gap-2 text-green-600 text-xs font-bold bg-green-50 p-2 rounded-xl inline-flex">
+                <h2 class="text-3xl font-black text-slate-800 tabular-nums">Rp {{ number_format($totalSimpanan) }}</h2>
+                <div class="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-[10px] font-black bg-green-100/50 text-green-700 border border-green-200 uppercase tracking-widest">
                     <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
-                    +2.5% bulan ini
+                    Saldo Tersimpan
                 </div>
             </div>
         </div>
 
         {{-- Total Pinjaman --}}
-        <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 relative overflow-hidden group">
+        <div class="group relative bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-500">
             <div class="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-bl-[80px] -z-0 transition-all duration-500 group-hover:scale-110 group-hover:bg-amber-100"></div>
             <div class="relative z-10 space-y-6">
-                <div class="flex items-center justify-between gap-4">
-                    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Total Pinjaman</p>
-                    <div class="p-3 bg-amber-100 text-amber-700 rounded-2xl">
+                <div class="flex items-center justify-between">
+                    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-amber-700 transition-colors">Total Pinjaman</p>
+                    <div class="p-4 bg-amber-100 text-amber-600 rounded-2xl shadow-sm">
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                         </svg>
                     </div>
                 </div>
-                <h2 class="text-3xl font-black text-slate-800">Rp 5.000.000</h2>
-                <p class="text-slate-400 text-xs font-medium italic bg-amber-50 p-2 rounded-xl inline-flex">Sisa 12x angsuran</p>
+                <h2 class="text-3xl font-black text-slate-800 tabular-nums">Rp {{ number_format($totalPinjaman) }}</h2>
+                <div class="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-[10px] font-black bg-amber-100/50 text-amber-700 border border-amber-200 uppercase tracking-widest">
+                    Sisa {{ $sisaAngsuran }}x angsuran
+                </div>
             </div>
         </div>
 
         {{-- Cicilan Bulan Ini --}}
-        <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 relative overflow-hidden group">
+        <div class="group relative bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-500">
             <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-[80px] -z-0 transition-all duration-500 group-hover:scale-110 group-hover:bg-blue-100"></div>
             <div class="relative z-10 space-y-6">
-                <div class="flex items-center justify-between gap-4">
-                    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Cicilan Bulan Ini</p>
-                    <div class="p-3 bg-blue-100 text-blue-600 rounded-2xl">
+                <div class="flex items-center justify-between">
+                    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-blue-700 transition-colors">Cicilan Bulan Ini</p>
+                    <div class="p-4 bg-blue-100 text-blue-600 rounded-2xl shadow-sm">
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                     </div>
                 </div>
-                <h2 class="text-3xl font-black text-blue-600">Rp 500.000</h2>
-                <div class="inline-flex items-center px-2.5 py-1.5 rounded-full text-[10px] font-black bg-blue-50 text-blue-700 uppercase tracking-tight">
-                    Jatuh Tempo: 25 Jan
+                <h2 class="text-3xl font-black text-blue-600 tabular-nums">Rp {{ number_format($tagihanBulanIni) }}</h2>
+                <div class="mt-2 inline-flex items-center gap-1.5 px-4 py-1.5 bg-blue-50 text-blue-700 text-[10px] font-black rounded-xl border border-blue-100 uppercase tracking-wide">
+                    <span class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+                    Jatuh Tempo: {{ $pinjamanAktif?->installments?->where('status','pending')?->first()?->due_date?->format('d M') ?? '-' }}
                 </div>
             </div>
         </div>
@@ -96,85 +99,77 @@
                         </div>
                         <div>
                             <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Total Tagihan</p>
-                            <p class="text-2xl font-black text-slate-800">Rp 500.000</p>
+                            <p class="text-2xl font-black text-slate-800">Rp {{ number_format($tagihanBulanIni) }}</p>
                         </div>
                     </div>
                 </div>
 
-                <button @click="openModal = true" class="w-full py-5 bg-green-600 text-white font-black rounded-2xl shadow-xl shadow-green-100 hover:bg-green-700 transition-all hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-3 relative z-10">
-    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-    Bayar Sekarang
-</button>
+                @if($pinjamanAktif && $tagihanBulanIni > 0)
+                <form action="{{ route('anggota.angsuran.bayar') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="installment_id" value="{{ $pinjamanAktif->installments->where('status','pending')->first()?->id ?? '' }}">
+                    <button type="submit" class="w-full py-5 bg-green-600 text-white font-black rounded-2xl shadow-xl shadow-green-100 hover:bg-green-700 transition-all hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-3 relative z-10">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                        Bayar Sekarang
+                    </button>
+                </form>
+                @endif
             </div>
         </div>
 
         {{-- ================= RECENT TRANSACTIONS (RIGHT SIDE) ================= --}}
         <div class="lg:col-span-2">
-            <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
-                <div class="p-8 border-b border-slate-50 flex items-center justify-between">
-                    <h2 class="text-xl font-black text-slate-800 tracking-tight">Riwayat Transaksi</h2>
-                    <a href="#" class="text-xs font-black uppercase tracking-widest text-blue-600 hover:text-blue-700">Lihat Semua</a>
+            <div class="bg-white rounded-[3rem] shadow-sm border border-slate-100 overflow-hidden animate-slide-up">
+                <div class="p-8 border-b border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-gradient-to-r from-white to-slate-50/30">
+                    <div class="flex items-center gap-5">
+                        <div class="w-14 h-14 bg-slate-900 rounded-[1.3rem] flex items-center justify-center text-white shadow-xl shadow-slate-200 rotate-3 group hover:rotate-0 transition-transform duration-300">
+                            <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-black text-slate-800 tracking-tight">Riwayat Transaksi</h2>
+                            <p class="text-sm text-slate-400 font-medium italic">Riwayat transaksi simpanan & pinjaman terbaru.</p>
+                        </div>
+                    </div>
+                    <a href="#" class="px-6 py-3 bg-white border border-slate-200 text-slate-600 text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-slate-50 transition-all shadow-sm">
+                        Lihat Semua
+                    </a>
                 </div>
 
-                <div class="overflow-x-auto custom-scrollbar">
+                <div class="overflow-x-auto">
                     <table class="w-full">
                         <thead>
                             <tr class="bg-slate-50/50">
-                                <th class="px-8 py-4 text-left text-[10px] font-black uppercase tracking-widest text-slate-400">Tanggal</th>
-                                <th class="px-8 py-4 text-left text-[10px] font-black uppercase tracking-widest text-slate-400">Jenis Transaksi</th>
-                                <th class="px-8 py-4 text-left text-[10px] font-black uppercase tracking-widest text-slate-400">Nominal</th>
-                                <th class="px-8 py-4 text-left text-[10px] font-black uppercase tracking-widest text-slate-400">Status</th>
+                                <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Tanggal</th>
+                                <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Jenis Transaksi</th>
+                                <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Nominal</th>
+                                <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Status</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
-                            {{-- Row 1 --}}
-                            <tr class="hover:bg-slate-50/50 transition-colors group">
-                                <td class="px-8 py-5 text-sm font-bold text-slate-600">10 Jan 2026</td>
-                                <td class="px-8 py-5">
+                            @forelse($riwayatTransaksi as $trx)
+                            <tr class="group hover:bg-blue-50/30 transition-all duration-300">
+                                <td class="px-8 py-7 text-sm font-bold text-slate-600">{{ $trx->paid_date?->format('d M Y') ?? $trx->created_at->format('d M Y') }}</td>
+                                <td class="px-8 py-7">
                                     <div class="flex items-center gap-3">
-                                        <div class="p-2 bg-green-50 text-green-600 rounded-lg group-hover:scale-110 transition-transform">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                                        </div>
-                                        <span class="text-sm font-bold text-slate-800">Simpanan Pokok</span>
-                                    </div>
-                                </td>
-                                <td class="px-8 py-5 text-sm font-black text-slate-800 tabular-nums">Rp 1.000.000</td>
-                                <td class="px-8 py-5">
-                                    <span class="inline-flex items-center px-3 py-1 bg-green-50 text-green-700 text-[10px] font-black rounded-lg uppercase">Berhasil</span>
-                                </td>
-                            </tr>
-                            {{-- Row 2 --}}
-                            <tr class="hover:bg-slate-50/50 transition-colors group">
-                                <td class="px-8 py-5 text-sm font-bold text-slate-600">05 Jan 2026</td>
-                                <td class="px-8 py-5">
-                                    <div class="flex items-center gap-3">
-                                        <div class="p-2 bg-blue-50 text-blue-600 rounded-lg group-hover:scale-110 transition-transform">
+                                        <div class="p-4 bg-blue-50 text-blue-600 rounded-2xl shadow-sm">
                                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                                         </div>
-                                        <span class="text-sm font-bold text-slate-800">Cicilan Pinjaman</span>
+                                        <span class="text-sm font-bold text-slate-800">Cicilan Pinjaman (Angsuran ke-{{ $trx->installment_number }})</span>
                                     </div>
                                 </td>
-                                <td class="px-8 py-5 text-sm font-black text-slate-800 tabular-nums">Rp 500.000</td>
-                                <td class="px-8 py-5">
-                                    <span class="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 text-[10px] font-black rounded-lg uppercase">Lunas</span>
+                                <td class="px-8 py-7 text-sm font-black text-slate-800 tabular-nums">Rp {{ number_format($trx->amount) }}</td>
+                                <td class="px-8 py-7">
+                                    <span class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-emerald-50 text-emerald-700 text-[10px] font-black rounded-xl border border-emerald-100 uppercase tracking-wide">
+                                        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                                        Lunas
+                                    </span>
                                 </td>
                             </tr>
-                            {{-- Row 3 --}}
-                            <tr class="hover:bg-slate-50/50 transition-colors group">
-                                <td class="px-8 py-5 text-sm font-bold text-slate-600">01 Jan 2026</td>
-                                <td class="px-8 py-5">
-                                    <div class="flex items-center gap-3">
-                                        <div class="p-2 bg-amber-50 text-amber-600 rounded-lg group-hover:scale-110 transition-transform">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zM17 21v-2a4 4 0 00-4-4H9a4 4 0 00-4 4v2"/></svg>
-                                        </div>
-                                        <span class="text-sm font-bold text-slate-800">Pencairan Pinjaman</span>
-                                    </div>
-                                </td>
-                                <td class="px-8 py-5 text-sm font-black text-slate-800 tabular-nums">Rp 5.000.000</td>
-                                <td class="px-8 py-5">
-                                    <span class="inline-flex items-center px-3 py-1 bg-amber-50 text-amber-700 text-[10px] font-black rounded-lg uppercase">Diproses</span>
-                                </td>
+                            @empty
+                            <tr>
+                                <td colspan="4" class="px-8 py-12 text-center font-bold text-slate-400 italic">Belum ada transaksi.</td>
                             </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -242,20 +237,10 @@
 </div>
 
 <style>
-    /* Styling scrollbar kustom agar tidak mengganggu desain */
-    .custom-scrollbar::-webkit-scrollbar {
-        height: 5px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-track {
-        background: transparent;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: #e2e8f0; /* slate-200 */
-        border-radius: 10px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-        background: #94a3b8; /* slate-400 */
-    }
+    @keyframes fade-in { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slide-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fade-in 0.6s ease-out forwards; }
+    .animate-slide-up { animation: slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 </style>
 
 @endsection

@@ -30,7 +30,7 @@
         <div class="flex items-center gap-4">
             <div class="text-right hidden sm:block">
                 <p class="text-xs font-black text-slate-800 leading-none">{{ auth()->user()->name ?? 'massyanto' }}</p>
-                <p class="text-[9px] font-bold text-blue-600 uppercase tracking-widest mt-1">role</p>
+                <p class="text-[9px] font-bold text-blue-600 uppercase tracking-widest mt-1">{{ auth()->user()->roles->first()->name ?? 'role' }}</p>
             </div>
             
             <div x-data="{ open: false }" class="relative">

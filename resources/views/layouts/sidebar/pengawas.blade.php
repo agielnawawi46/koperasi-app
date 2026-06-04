@@ -89,7 +89,34 @@
             <span class="text-sm font-bold tracking-wide">Laporan & SHU</span>
         </a>
 
+        <div class="my-8 px-4">
+            <div class="h-px bg-slate-800 w-full"></div>
+        </div>
+
+        <p class="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-4">Akun</p>
+
+        <a href="/pengawas/profil"
+           class="group flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all duration-300 {{ request()->is('pengawas/profil*') ? 'bg-blue-600 text-white shadow-xl shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+            <svg class="w-5 h-5 transition-transform duration-300 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            <span class="text-sm font-bold tracking-wide">Profil</span>
+        </a>
+
     </nav>
+
+    {{-- ================= LOGOUT ================= --}}
+    <div class="px-6 pb-6">
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="group flex items-center gap-4 w-full px-5 py-3.5 rounded-2xl text-slate-400 hover:bg-rose-500/10 hover:text-rose-400 transition-all duration-300">
+                <svg class="w-5 h-5 transition-transform duration-300 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                <span class="text-sm font-bold tracking-wide">Logout</span>
+            </button>
+        </form>
+    </div>
 
     {{-- ================= SUPERVISOR FOOTER ================= --}}
     <div class="p-9 border-t border-slate-800">

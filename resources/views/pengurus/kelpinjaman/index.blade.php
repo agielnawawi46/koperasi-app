@@ -13,7 +13,7 @@
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div class="space-y-1">
             <div class="flex items-center gap-3">
-                <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Kelola Pinjaman</h1>
+                <h1 class="text-3xl font-black text-slate-800 tracking-tight">Kelola Pinjaman</h1>
             </div>
             <p class="text-slate-500 font-medium ml-1">Review, persetujuan, dan monitoring pencairan dana anggota.</p>
         </div>
@@ -84,7 +84,7 @@
                     </div>
                 </div>
                 <div>
-                    <h2 class="text-3xl font-black text-slate-800 tabular-nums">Rp 1.240.0M</h2>
+                    <h2 class="text-3xl font-black text-slate-800 tabular-nums">Rp {{ number_format($totalOutstanding) }}</h2>
                     <div class="mt-2 inline-flex items-center px-3 py-1.5 rounded-xl text-[10px] font-black bg-blue-100/50 text-blue-700 border border-blue-200 uppercase tracking-widest">Pinjaman Berjalan</div>
                 </div>
             </div>
@@ -100,7 +100,7 @@
                     </div>
                 </div>
                 <div>
-                    <h2 class="text-3xl font-black text-slate-800 tabular-nums">14 <span class="text-sm text-slate-400 font-bold uppercase tracking-widest">Berkas</span></h2>
+                    <h2 class="text-3xl font-black text-slate-800 tabular-nums">{{ $perluReview }} <span class="text-sm text-slate-400 font-bold uppercase tracking-widest">Berkas</span></h2>
                     <div class="mt-2 inline-flex items-center px-3 py-1.5 rounded-xl text-[10px] font-black bg-amber-100/50 text-amber-700 border border-amber-200 uppercase tracking-widest">Segera Proses</div>
                 </div>
             </div>
@@ -116,8 +116,8 @@
                     </div>
                 </div>
                 <div>
-                    <h2 class="text-3xl font-black text-slate-800 tabular-nums">Rp 85.4M</h2>
-                    <div class="mt-2 inline-flex items-center px-3 py-1.5 rounded-xl text-[10px] font-black bg-emerald-100/50 text-emerald-700 border border-emerald-200 uppercase tracking-widest">Periode April</div>
+                    <h2 class="text-3xl font-black text-slate-800 tabular-nums">Rp {{ number_format($estimasiCicilan) }}</h2>
+                    <div class="mt-2 inline-flex items-center px-3 py-1.5 rounded-xl text-[10px] font-black bg-emerald-100/50 text-emerald-700 border border-emerald-200 uppercase tracking-widest">Periode {{ now()->translatedFormat('F') }}</div>
                 </div>
             </div>
         </div>
@@ -148,39 +148,66 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-50">
+                    @forelse($pinjaman as $p)
                     <tr class="group hover:bg-amber-50/30 transition-all duration-300">
                         <td class="px-8 py-7">
                             <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center font-black text-slate-600 group-hover:bg-amber-100 group-hover:text-amber-700 transition-all">AS</div>
+                                <div class="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center font-black text-slate-600 group-hover:bg-amber-100 group-hover:text-amber-700 transition-all">{{ strtoupper(substr($p->user->name ?? '?', 0, 2)) }}</div>
                                 <div>
-                                    <p class="text-sm font-black text-slate-800">Agiel Syah</p>
-                                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">AN-2026-0042</p>
+                                    <p class="text-sm font-black text-slate-800">{{ $p->user->name ?? 'Unknown' }}</p>
+                                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">{{ $p->loan_number }}</p>
                                 </div>
                             </div>
                         </td>
                         <td class="px-8 py-7">
                             <div class="flex flex-col">
-                                <span class="text-sm font-black text-slate-700 tracking-tight">Rp 15.000.000</span>
-                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">12 Bln | Bunga 0.8%</span>
+                                <span class="text-sm font-black text-slate-700 tracking-tight">Rp {{ number_format($p->amount) }}</span>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{{ $p->tenure_months }} Bln | Bunga {{ $p->interest_rate }}%</span>
                             </div>
                         </td>
                         <td class="px-8 py-7 text-center">
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-600 text-[10px] font-black rounded-xl border border-amber-200/50 uppercase tracking-widest">
-                                <span class="w-1.5 h-1.5 bg-amber-500 rounded-full animate-ping"></span>
-                                Waiting
+                            @php
+                                $statusColors = ['pending' => 'bg-amber-50 text-amber-600 border-amber-200/50', 'approved' => 'bg-blue-50 text-blue-600 border-blue-200/50', 'active' => 'bg-emerald-50 text-emerald-600 border-emerald-200/50', 'rejected' => 'bg-red-50 text-red-600 border-red-200/50', 'paid' => 'bg-slate-50 text-slate-600 border-slate-200/50'];
+                                $statusLabels = ['pending' => 'Waiting', 'approved' => 'Disetujui', 'active' => 'Aktif', 'rejected' => 'Ditolak', 'paid' => 'Lunas'];
+                            @endphp
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 {{ $statusColors[$p->status] ?? 'bg-slate-50 text-slate-600' }} text-[10px] font-black rounded-xl border uppercase tracking-widest">
+                                <span class="w-1.5 h-1.5 {{ $p->status === 'pending' ? 'bg-amber-500 animate-ping' : ($p->status === 'active' ? 'bg-emerald-500' : 'bg-slate-400') }} rounded-full"></span>
+                                {{ $statusLabels[$p->status] ?? ucfirst($p->status) }}
                             </span>
                         </td>
                         <td class="px-8 py-7 text-right">
+                            @if($p->status === 'pending')
                             <div class="flex justify-end gap-2">
-                                <button class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm">
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-                                </button>
-                                <button class="p-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-sm">
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
-                                </button>
+                                <form action="{{ route('pengurus.kelpinjaman.approve', $p) }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="submit" class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                    </button>
+                                </form>
+                                <form action="{{ route('pengurus.kelpinjaman.reject', $p) }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="submit" class="p-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-sm">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    </button>
+                                </form>
                             </div>
+                            @elseif($p->status === 'approved')
+                            <form action="{{ route('pengurus.kelpinjaman.cairkan', $p) }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" class="p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm text-[9px] font-black uppercase tracking-widest px-3">
+                                    Cairkan
+                                </button>
+                            </form>
+                            @else
+                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ $p->status }}</span>
+                            @endif
                         </td>
                     </tr>
+                    @empty
+                    <tr>
+                        <td colspan="4" class="px-8 py-12 text-center font-bold text-slate-400 italic">Tidak ada data pinjaman.</td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -207,28 +234,36 @@
         </div>
 
         {{-- Form Body --}}
-        <form class="p-10 space-y-8">
+        <form action="{{ route('pengurus.kelpinjaman.store') }}" method="POST" class="p-10 space-y-8">
+            @csrf
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="space-y-2">
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Pilih Anggota</label>
-                    <select class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer">
-                        <option>Agiel Syah - AN-2026-0042</option>
+                    <select name="user_id" class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer">
+                        @foreach(\App\Models\User::role('anggota')->get() as $u)
+                        <option value="{{ $u->id }}">{{ $u->name }} - {{ $u->email }}</option>
+                        @endforeach
                     </select>
                 </div>
                 <div class="space-y-2">
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nominal (Rp)</label>
-                    <input type="number" class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 transition-all">
+                    <input type="number" name="amount" class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 transition-all">
                 </div>
                 <div class="space-y-2">
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tenor (Bulan)</label>
-                    <select class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 transition-all">
-                        <option value="12">12 Bulan</option>
-                        <option value="24">24 Bulan</option>
+                    <select name="tenure_months" class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 transition-all">
+                        @for($i = 3; $i <= 60; $i+=3)
+                        <option value="{{ $i }}" {{ $i == 12 ? 'selected' : '' }}>{{ $i }} Bulan</option>
+                        @endfor
                     </select>
                 </div>
                 <div class="space-y-2">
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Bunga (%)</label>
-                    <input type="text" value="0.8" class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 transition-all">
+                    <input type="number" name="interest_rate" step="0.1" value="{{ \App\Models\Organization::first()?->bunga_rate ?? 0.8 }}" class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 transition-all">
+                </div>
+                <div class="md:col-span-2 space-y-2">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tujuan Pinjaman</label>
+                    <input type="text" name="purpose" class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 transition-all" placeholder="Misal: Dana Darurat, Modal Usaha, dll">
                 </div>
             </div>
             <div class="flex items-center justify-end gap-4 pt-4">

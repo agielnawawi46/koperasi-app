@@ -11,7 +11,7 @@
     {{-- ================= HEADER & EXPORT ACTIONS ================= --}}
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-            <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Laporan Keuangan</h1>
+            <h1 class="text-3xl font-black text-slate-800 tracking-tight">Laporan Keuangan</h1>
             <p class="text-slate-500 font-medium">Rekapitulasi arus kas dan kesehatan finansial **DanaKarya**.</p>
         </div>
         <div class="flex items-center gap-3">
@@ -46,7 +46,7 @@
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
                     </div>
                 </div>
-                <h3 class="text-xl font-black text-slate-800 tabular-nums">Rp 42.5M</h3>
+                <h3 class="text-xl font-black text-slate-800 tabular-nums">Rp {{ number_format($pemasukanHariIni) }}</h3>
             </div>
         </div>
 
@@ -60,7 +60,7 @@
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
                 </div>
-                <h3 class="text-xl font-black text-slate-800 tabular-nums">Rp 120M</h3>
+                <h3 class="text-xl font-black text-slate-800 tabular-nums">Rp {{ number_format($penyaluranHariIni) }}</h3>
             </div>
         </div>
 
@@ -74,7 +74,7 @@
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                     </div>
                 </div>
-                <h3 class="text-xl font-black text-slate-800 tabular-nums">1,254 <span class="text-[10px] text-slate-400 uppercase">Trx</span></h3>
+                <h3 class="text-xl font-black text-slate-800 tabular-nums">{{ number_format($totalTransaksi) }} <span class="text-[10px] text-slate-400 uppercase">Trx</span></h3>
             </div>
         </div>
 
@@ -88,7 +88,7 @@
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                     </div>
                 </div>
-                <h3 class="text-xl font-black text-white tabular-nums">Rp 5.2M</h3>
+                <h3 class="text-xl font-black text-white tabular-nums">Rp {{ number_format(max(0, $netProfit)) }}</h3>
             </div>
         </div>
     </div>
@@ -123,51 +123,36 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-50">
-                    {{-- Row 1: Pemasukan --}}
+                    @forelse($semuaTransaksi as $t)
                     <tr class="group hover:bg-slate-50/50 transition-all duration-300">
                         <td class="px-8 py-6">
-                            <p class="text-sm font-black text-slate-800">23 Apr 2026</p>
-                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">TRX-2026-001</p>
+                            <p class="text-sm font-black text-slate-800">{{ $t['tanggal'] }}</p>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">{{ $t['id_transaksi'] }}</p>
                         </td>
                         <td class="px-8 py-6">
-                            <p class="text-sm font-bold text-slate-700 tracking-tight italic">Setoran Pokok Anggota - Budi Santoso</p>
+                            <p class="text-sm font-bold text-slate-700 tracking-tight italic">{{ $t['keterangan'] }}</p>
                         </td>
                         <td class="px-8 py-6 text-center">
-                            <span class="inline-flex items-center px-4 py-1.5 bg-emerald-50 text-emerald-700 text-[9px] font-black rounded-xl border border-emerald-100 uppercase tracking-wide">
-                                <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-1.5"></span>
-                                Pemasukan
+                            <span class="inline-flex items-center px-4 py-1.5 {{ $t['kategori'] === 'pemasukan' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-blue-50 text-blue-700 border-blue-100' }} text-[9px] font-black rounded-xl border uppercase tracking-wide">
+                                <span class="w-1.5 h-1.5 {{ $t['kategori'] === 'pemasukan' ? 'bg-emerald-500' : 'bg-blue-500' }} rounded-full mr-1.5"></span>
+                                {{ ucfirst($t['kategori']) }}
                             </span>
                         </td>
                         <td class="px-8 py-6 text-right">
-                            <p class="text-sm font-black text-emerald-600 tabular-nums">+ Rp 1.250.000</p>
+                            <p class="text-sm font-black {{ $t['kategori'] === 'pemasukan' ? 'text-emerald-600' : 'text-red-600' }} tabular-nums">{{ $t['kategori'] === 'pemasukan' ? '+' : '-' }} Rp {{ number_format($t['nominal']) }}</p>
                         </td>
                     </tr>
-
-                    {{-- Row 2: Penyaluran --}}
-                    <tr class="group hover:bg-slate-50/50 transition-all duration-300">
-                        <td class="px-8 py-6">
-                            <p class="text-sm font-black text-slate-800">22 Apr 2026</p>
-                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">TRX-2026-002</p>
-                        </td>
-                        <td class="px-8 py-6">
-                            <p class="text-sm font-bold text-slate-700 tracking-tight italic">Pencairan Dana Pinjaman Pendidikan</p>
-                        </td>
-                        <td class="px-8 py-6 text-center">
-                            <span class="inline-flex items-center px-4 py-1.5 bg-blue-50 text-blue-700 text-[9px] font-black rounded-xl border border-blue-100 uppercase tracking-wide">
-                                <span class="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5"></span>
-                                Penyaluran
-                            </span>
-                        </td>
-                        <td class="px-8 py-6 text-right">
-                            <p class="text-sm font-black text-red-600 tabular-nums">- Rp 15.000.000</p>
-                        </td>
+                    @empty
+                    <tr>
+                        <td colspan="4" class="px-8 py-12 text-center font-bold text-slate-400 italic">Belum ada transaksi hari ini.</td>
                     </tr>
+                    @endforelse
                 </tbody>
                 <tfoot>
                     <tr class="bg-slate-900">
                         <td colspan="3" class="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 text-right">Total Net Balance Periode Ini</td>
                         <td class="px-8 py-5 text-right">
-                            <span class="text-sm font-black text-white tabular-nums">Rp 5.200.000</span>
+                            <span class="text-sm font-black text-white tabular-nums">Rp {{ number_format(max(0, $netProfit)) }}</span>
                         </td>
                     </tr>
                 </tfoot>

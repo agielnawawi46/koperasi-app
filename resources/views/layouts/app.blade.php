@@ -5,16 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DanaKarya</title>
     @vite('resources/css/app.css')
+    <script src="//unpkg.com/alpinejs" defer></script>
 </head>
-<script src="//unpkg.com/alpinejs" defer></script>
-<body class="bg-gray-100">
-<div class="flex min-h-screen">
+<body class="bg-gray-100 antialiased">
+<div class="flex min-h-screen w-full overflow-x-hidden">
 
     {{-- Sidebar akan diisi oleh layout turunan --}}
     @yield('sidebar')
 
-    <!-- Konten -->
-    <div class="flex-1 flex flex-col">
+    <div class="flex-1 min-w-0 flex flex-col overflow-x-hidden">
 
         @include('layouts.partials.header')
 

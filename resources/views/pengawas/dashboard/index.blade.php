@@ -10,7 +10,7 @@
     {{-- ================= Header ================= --}}
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-            <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Dashboard Pengawas</h1>
+            <h1 class="text-3xl font-black text-slate-800 tracking-tight">Dashboard Pengawas</h1>
             <p class="text-slate-500 font-medium">Gambaran umum dan pemantauan sistem operasional DanaKarya.</p>
         </div>
         <div class="flex items-center gap-3">
@@ -27,7 +27,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
         {{-- Total Transaksi --}}
-        <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 relative overflow-hidden group hover:shadow-xl transition-all duration-500">
+        <div class="group relative bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-500">
             <div class="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-bl-[80px] -z-0 transition-all duration-500 group-hover:scale-110 group-hover:bg-slate-100"></div>
             <div class="relative z-10 space-y-6">
                 <div class="flex items-center justify-between">
@@ -37,7 +37,7 @@
                     </div>
                 </div>
                 <div>
-                    <h2 class="text-4xl font-black text-slate-800 tabular-nums tracking-tight">3,200</h2>
+                    <h2 class="text-4xl font-black text-slate-800 tabular-nums tracking-tight">{{ number_format($totalTransaksiSelesai) }}</h2>
                     <div class="mt-2 items-center gap-2 text-slate-500 text-[10px] font-black bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 inline-flex uppercase">
                         Data Tersinkronisasi
                     </div>
@@ -46,7 +46,7 @@
         </div>
 
         {{-- Laporan Bulanan --}}
-        <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 relative overflow-hidden group hover:shadow-xl transition-all duration-500">
+        <div class="group relative bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-500">
             <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-[80px] -z-0 transition-all duration-500 group-hover:scale-110 group-hover:bg-blue-100"></div>
             <div class="relative z-10 space-y-6">
                 <div class="flex items-center justify-between">
@@ -56,7 +56,7 @@
                     </div>
                 </div>
                 <div>
-                    <h2 class="text-4xl font-black text-slate-800 tabular-nums tracking-tight">12 <span class="text-sm font-bold text-slate-400 uppercase tracking-widest">Bulan</span></h2>
+                    <h2 class="text-4xl font-black text-slate-800 tabular-nums tracking-tight">{{ $laporanBulananAktif }}</h2>
                     <div class="mt-2 items-center gap-2 text-blue-600 text-[10px] font-black bg-blue-100/50 px-3 py-1.5 rounded-xl border border-blue-200 inline-flex uppercase">
                         Siklus Tahunan
                     </div>
@@ -65,7 +65,7 @@
         </div>
 
         {{-- Status Sistem --}}
-        <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 relative overflow-hidden group hover:shadow-xl transition-all duration-500">
+        <div class="group relative bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-500">
             <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-[80px] -z-0 transition-all duration-500 group-hover:scale-110 group-hover:bg-emerald-100"></div>
             <div class="relative z-10 space-y-6">
                 <div class="flex items-center justify-between">
@@ -75,7 +75,7 @@
                     </div>
                 </div>
                 <div>
-                    <h2 class="text-4xl font-black text-emerald-500 tracking-tight">Normal</h2>
+                    <h2 class="text-4xl font-black text-emerald-500 tracking-tight">{{ $sistemStatus }}</h2>
                     <div class="mt-2 flex items-center gap-2 text-emerald-600 text-[10px] font-black bg-emerald-100/50 px-3 py-1.5 rounded-xl border border-emerald-200 uppercase w-fit">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                         Aman Terkendali
@@ -178,7 +178,9 @@
 
 <style>
     @keyframes fade-in { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-    .animate-fade-in { animation: fade-in 0.5s ease-out forwards; }
+    @keyframes slide-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fade-in 0.6s ease-out forwards; }
+    .animate-slide-up { animation: slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 </style>
 
 @endsection

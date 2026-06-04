@@ -6,19 +6,19 @@
 
 @section('content')
 {{-- Tambahkan x-data untuk kontrol popup --}}
-<div class="px-8 py-8 bg-[#f8fafc] min-h-screen space-y-8" x-data="{ openModal: false }">
+<div class="px-8 py-8 bg-[#f8fafc] min-h-screen space-y-8 animate-fade-in" x-data="{ openModal: false }">
 
     {{-- ================= Header Section ================= --}}
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-            <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Sisa Hasil Usaha (SHU)</h1>
+            <h1 class="text-3xl font-black text-slate-800 tracking-tight">Sisa Hasil Usaha (SHU)</h1>
             <p class="text-slate-500 mt-1 font-medium">Transparansi pembagian keuntungan tahunan anggota</p>
         </div>
         <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl shadow-sm border border-slate-100">
             <div class="p-2 bg-indigo-50 rounded-lg">
                 <svg class="w-4 h-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             </div>
-            <span class="text-sm font-bold text-slate-600">Periode Buku 2025</span>
+            <span class="text-sm font-bold text-slate-600">Periode Buku {{ $tahunBuku }}</span>
         </div>
     </div>
 
@@ -26,15 +26,14 @@
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
     
     {{-- Total SHU Diterima (Hero Card) --}}
-    <div class="md:col-span-2 bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 relative overflow-hidden group hover:shadow-xl transition-all duration-500">
-        {{-- Ornamen Latar --}}
+    <div class="md:col-span-2 group relative bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-500">
         <div class="absolute top-0 right-0 w-48 h-48 bg-indigo-50 rounded-bl-[120px] -z-0 transition-all duration-500 group-hover:scale-110 group-hover:bg-indigo-100"></div>
         
         <div class="relative z-10 flex flex-col h-full justify-between">
             <div class="space-y-6">
-                <div class="flex items-center justify-between gap-4">
-                    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Total SHU Tahun Ini</p>
-                    <div class="p-3 bg-indigo-100 text-indigo-600 rounded-2xl transition-transform duration-500 group-hover:rotate-12">
+                <div class="flex items-center justify-between">
+                    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-indigo-700 transition-colors">Total SHU Tahun Ini</p>
+                    <div class="p-4 bg-indigo-100 text-indigo-600 rounded-2xl shadow-sm">
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -42,17 +41,24 @@
                 </div>
                 
                 <div>
-                    <h2 class="text-5xl font-black text-black tabular-nums tracking-tight">Rp 2.450.750</h2>
+                    <h2 class="text-5xl font-black text-black tabular-nums tracking-tight">Rp {{ number_format($totalSHU) }}</h2>
                     <p class="text-xs text-slate-500 font-medium max-w-sm mt-2 leading-relaxed">Dana akumulasi Jasa Modal dan Jasa Anggota yang telah disahkan melalui RAT.</p>
                 </div>
 
                 <div class="flex items-center gap-4">
-                    <button @click="openModal = true" class="bg-indigo-600 text-white px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 hover:-translate-y-1 active:scale-95">
+                    @if($statusSHU === 'Siap Diambil')
+                    <button @click="openModal = true" class="group flex items-center gap-2 px-5 py-3.5 bg-indigo-600 text-white font-bold rounded-2xl shadow-xl shadow-indigo-200 hover:bg-indigo-700 transition-all active:scale-95">
                         Ambil / Tarik SHU
                     </button>
-                    <div class="flex items-center gap-2 text-indigo-600 text-[10px] font-black bg-indigo-50 px-3 py-1 rounded-full uppercase w-fit">
-                        <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse"></span>
-                        Status: Siap Diambil
+                    @elseif($statusSHU === 'Sudah Diambil')
+                    <div class="flex items-center gap-2 px-5 py-3.5 bg-emerald-50 text-emerald-700 font-bold rounded-2xl border border-emerald-100">
+                        <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                        Sudah Diambil
+                    </div>
+                    @endif
+                    <div class="inline-flex items-center gap-1.5 px-4 py-1.5 {{ $statusSHU === 'Siap Diambil' ? 'bg-indigo-50 text-indigo-700 border-indigo-100' : ($statusSHU === 'Sudah Diambil' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-slate-50 text-slate-700 border-slate-100') }} text-[10px] font-black rounded-xl border uppercase tracking-wide">
+                        <span class="w-1.5 h-1.5 {{ $statusSHU === 'Siap Diambil' ? 'bg-indigo-500 animate-pulse' : ($statusSHU === 'Sudah Diambil' ? 'bg-emerald-500' : 'bg-slate-400') }} rounded-full"></span>
+                        Status: {{ $statusSHU }}
                     </div>
                 </div>
             </div>
@@ -60,14 +66,13 @@
     </div>
 
     {{-- Breakdown Singkat (Komponen SHU) --}}
-    <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 relative overflow-hidden group hover:shadow-xl transition-all duration-500">
-        {{-- Ornamen Latar --}}
+    <div class="group relative bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-500">
         <div class="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-bl-[80px] -z-0 transition-all duration-500 group-hover:scale-110 group-hover:bg-slate-100"></div>
         
         <div class="relative z-10 space-y-6">
-            <div class="flex items-center justify-between gap-4">
-                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Komponen SHU</p>
-                <div class="p-3 bg-slate-100 text-slate-600 rounded-2xl transition-transform duration-500 group-hover:-rotate-12">
+            <div class="flex items-center justify-between">
+                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-slate-700 transition-colors">Komponen SHU</p>
+                <div class="p-4 bg-slate-100 text-slate-600 rounded-2xl shadow-sm">
                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M11 3.055A9.003 9.003 0 003.055 11H11V3.055z" />
                         <path stroke-linecap="round" stroke-linejoin="round" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
@@ -80,28 +85,28 @@
                 <div class="space-y-2">
                     <div class="flex justify-between items-center text-[10px] font-black uppercase tracking-wider">
                         <span class="text-slate-400">Jasa Modal</span>
-                        <span class="text-slate-800 bg-slate-50 px-2 py-0.5 rounded-lg">Rp 1.800.000</span>
+                        <span class="text-slate-800 bg-slate-50 px-2 py-0.5 rounded-lg">Rp {{ number_format($jasaModal) }}</span>
                     </div>
                     <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden p-0.5">
-                        <div class="bg-indigo-500 h-full rounded-full transition-all duration-1000 group-hover:bg-indigo-600" style="width: 70%"></div>
+                        <div class="bg-indigo-500 h-full rounded-full transition-all duration-1000 group-hover:bg-indigo-600" style="width: {{ $jasaModalPercent }}%"></div>
                     </div>
                 </div>
 
                 <div class="space-y-2">
                     <div class="flex justify-between items-center text-[10px] font-black uppercase tracking-wider">
                         <span class="text-slate-400">Jasa Anggota</span>
-                        <span class="text-slate-800 bg-slate-50 px-2 py-0.5 rounded-lg">Rp 650.750</span>
+                        <span class="text-slate-800 bg-slate-50 px-2 py-0.5 rounded-lg">Rp {{ number_format($jasaAnggota) }}</span>
                     </div>
                     <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden p-0.5">
-                        <div class="bg-sky-400 h-full rounded-full transition-all duration-1000 group-hover:bg-sky-500" style="width: 30%"></div>
+                        <div class="bg-sky-400 h-full rounded-full transition-all duration-1000 group-hover:bg-sky-500" style="width: {{ $jasaAnggotaPercent }}%"></div>
                     </div>
                 </div>
             </div>
 
             <div class="pt-4 border-t border-slate-50">
-                <div class="flex items-center justify-center gap-2 text-slate-400 text-[9px] font-bold bg-slate-50 py-2 rounded-xl uppercase tracking-tighter transition-colors group-hover:bg-slate-100">
+                <div class="flex items-center justify-center gap-2 text-slate-400 text-[10px] font-black bg-slate-100/50 py-2 rounded-xl uppercase tracking-wider">
                     <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                    Disahkan: Mar 2026
+                    Disahkan: {{ $disahkanPada ?? '-' }}
                 </div>
             </div>
         </div>
@@ -109,52 +114,65 @@
 </div>
 
         {{-- ================= Riwayat SHU Pertahun ================= --}}
-    <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-        <div class="flex justify-between items-center mb-8">
-            <div>
-                <h2 class="font-bold text-slate-800 text-lg">Riwayat SHU Per Tahun</h2>
-                <p class="text-xs text-slate-400 font-medium">Perbandingan perolehan SHU Anda 3 tahun terakhir</p>
+    <div class="bg-white rounded-[3rem] shadow-sm border border-slate-100 overflow-hidden animate-slide-up">
+        <div class="p-8 border-b border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-gradient-to-r from-white to-slate-50/30">
+            <div class="flex items-center gap-5">
+                <div class="w-14 h-14 bg-slate-900 rounded-[1.3rem] flex items-center justify-center text-white shadow-xl shadow-slate-200 rotate-3 group hover:rotate-0 transition-transform duration-300">
+                    <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div>
+                    <h2 class="text-xl font-black text-slate-800 tracking-tight">Riwayat SHU Per Tahun</h2>
+                    <p class="text-sm text-slate-400 font-medium italic">Perbandingan perolehan SHU Anda 3 tahun terakhir</p>
+                </div>
             </div>
         </div>
         
         <div class="overflow-x-auto">
-            <table class="w-full text-left">
+            <table class="w-full">
                 <thead>
-                    <tr class="border-b border-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                        <th class="pb-4">Tahun Buku</th>
-                        <th class="pb-4">Jasa Modal</th>
-                        <th class="pb-4">Jasa Anggota</th>
-                        <th class="pb-4">Total Diterima</th>
-                        <th class="pb-4 text-center">Metode Penyaluran</th>
-                        <th class="pb-4 text-center">Status</th>
+                    <tr class="bg-slate-50/50">
+                        <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Tahun Buku</th>
+                        <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Jasa Modal</th>
+                        <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Jasa Anggota</th>
+                        <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Total Diterima</th>
+                        <th class="px-8 py-5 text-center text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Metode</th>
+                        <th class="px-8 py-5 text-center text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Status</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-50">
-                    <tr class="group hover:bg-slate-50/50 transition-all">
-                        <td class="py-5 text-sm font-black text-slate-800">2025</td>
-                        <td class="py-5 text-sm text-slate-600 font-medium">Rp 1.800.000</td>
-                        <td class="py-5 text-sm text-slate-600 font-medium">Rp 650.750</td>
-                        <td class="py-5 text-sm font-black text-indigo-600">Rp 2.450.750</td>
-                        <td class="py-5 text-[10px] text-center font-bold text-slate-500 uppercase">Menunggu Instruksi</td>
-                        <td class="py-5 text-center">
-                            <span class="flex items-center justify-center gap-1 text-[9px] font-black text-amber-600 bg-amber-50 px-3 py-1 rounded-full uppercase w-fit mx-auto">
+                    @forelse($riwayatSHU as $r)
+                    <tr class="group hover:bg-blue-50/30 transition-all duration-300">
+                        <td class="px-8 py-7 text-sm font-black text-slate-800">{{ $r['tahun'] }}</td>
+                        <td class="px-8 py-7 text-sm text-slate-600 font-medium tabular-nums">Rp {{ number_format($r['jasa_modal']) }}</td>
+                        <td class="px-8 py-7 text-sm text-slate-600 font-medium tabular-nums">Rp {{ number_format($r['jasa_anggota']) }}</td>
+                        <td class="px-8 py-7 text-sm font-black tabular-nums {{ $r['status'] === 'Dibagikan' ? 'text-indigo-600' : 'text-slate-800' }}">Rp {{ number_format($r['total_diterima']) }}</td>
+                        <td class="px-8 py-7 text-center">
+                            <span class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-slate-50 text-slate-600 text-[10px] font-black rounded-xl border border-slate-100 uppercase tracking-wide">{{ $r['metode_penyaluran'] }}</span>
+                        </td>
+                        <td class="px-8 py-7 text-center">
+                            @if($r['status'] === 'Dibagikan')
+                            <span class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-amber-50 text-amber-700 text-[10px] font-black rounded-xl border border-amber-100 uppercase tracking-wide">
+                                <span class="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>
                                 Belum Diambil
                             </span>
-                        </td>
-                    </tr>
-                    <tr class="group hover:bg-slate-50/50 transition-all">
-                        <td class="py-5 text-sm font-black text-slate-800">2024</td>
-                        <td class="py-5 text-sm text-slate-600 font-medium">Rp 1.500.000</td>
-                        <td class="py-5 text-sm text-slate-600 font-medium">Rp 420.000</td>
-                        <td class="py-5 text-sm font-black text-slate-800">Rp 1.920.000</td>
-                        <td class="py-5 text-[10px] text-center font-bold text-slate-500 uppercase">Simp. Sukarela</td>
-                        <td class="py-5 text-center">
-                            <span class="flex items-center justify-center gap-1 text-[9px] font-black text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full uppercase w-fit mx-auto">
-                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
-                                Sudah Diterima
+                            @elseif($r['status'] === 'Sudah Diambil')
+                            <span class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-emerald-50 text-emerald-700 text-[10px] font-black rounded-xl border border-emerald-100 uppercase tracking-wide">
+                                <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                                Sudah Diambil
                             </span>
+                            @else
+                            <span class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-slate-50 text-slate-600 text-[10px] font-black rounded-xl border border-slate-100 uppercase tracking-wide">
+                                <span class="w-1.5 h-1.5 bg-slate-400 rounded-full"></span>
+                                Menunggu
+                            </span>
+                            @endif
                         </td>
                     </tr>
+                    @empty
+                    <tr>
+                        <td colspan="6" class="px-8 py-12 text-center font-bold text-slate-400 italic">Belum ada riwayat SHU.</td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -184,16 +202,17 @@
 
                 <div class="mb-8 p-6 bg-indigo-50 rounded-3xl border border-indigo-100 text-center">
                     <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Dana SHU Tersedia</p>
-                    <p class="text-3xl font-black text-indigo-600 tabular-nums">Rp 2.450.750</p>
+                    <p class="text-3xl font-black text-indigo-600 tabular-nums">Rp {{ number_format($totalSHU) }}</p>
                 </div>
 
-                <form action="#" class="space-y-6">
+                <form action="{{ route('anggota.shu.store') }}" method="POST" class="space-y-6">
+                    @csrf
                     <div>
                         <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block">Pilih Metode Penyaluran</label>
-                        <select class="w-full bg-slate-50 border-none rounded-2xl px-4 py-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500">
-                            <option>Pindahkan ke Simpanan Sukarela</option>
-                            <option>Cairkan via Transfer Bank</option>
-                            <option>Ambil Tunai di Kantor</option>
+                        <select name="distribution_method" class="w-full bg-slate-50 border-none rounded-2xl px-4 py-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500">
+                            <option value="Simpanan Sukarela">Pindahkan ke Simpanan Sukarela</option>
+                            <option value="Transfer Bank">Cairkan via Transfer Bank</option>
+                            <option value="Tunai">Ambil Tunai di Kantor</option>
                         </select>
                     </div>
 
@@ -214,6 +233,9 @@
 </div>
 
 <style>
-    [x-cloak] { display: none !important; }
+    @keyframes fade-in { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slide-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fade-in 0.6s ease-out forwards; }
+    .animate-slide-up { animation: slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 </style>
 @endsection

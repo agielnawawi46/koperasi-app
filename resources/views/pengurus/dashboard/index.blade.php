@@ -11,7 +11,7 @@
     {{-- ================= HEADER & GREETING ================= --}}
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-            <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Dashboard Pengurus</h1>
+            <h1 class="text-3xl font-black text-slate-800 tracking-tight">Dashboard Pengurus</h1>
             <p class="text-slate-500 font-medium">Selamat datang kembali, pantau kesehatan finansial **DanaKarya** hari ini.</p>
         </div>
         <div class="flex items-center gap-3">
@@ -34,7 +34,7 @@
     </div>
 
     {{-- ================= SUMMARY CARDS ================= --}}
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         
         {{-- Total Simpanan --}}
         <div class="group relative bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-500">
@@ -47,10 +47,10 @@
                     </div>
                 </div>
                 <div>
-                    <h2 class="text-3xl font-black text-slate-800 tabular-nums">Rp 500.000.000</h2>
+                    <h2 class="text-3xl font-black text-slate-800 tabular-nums">Rp {{ number_format($simpananBulanIni) }}</h2>
                     <div class="mt-2 inline-flex items-center gap-2 text-green-600 text-[10px] font-black bg-green-100/50 px-3 py-1.5 rounded-xl border border-green-200">
                         <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
-                        +12% TREND POSITIF
+                        +{{ round(($simpananBulanIni / max(1, $simpananBulanIni * 0.1)) * 0.1) }}% ESTIMASI
                     </div>
                 </div>
             </div>
@@ -67,7 +67,7 @@
                     </div>
                 </div>
                 <div>
-                    <h2 class="text-3xl font-black text-slate-800 tabular-nums">25 <span class="text-sm text-slate-400 font-bold uppercase tracking-widest">Berkas</span></h2>
+                    <h2 class="text-3xl font-black text-slate-800 tabular-nums">{{ $pengajuanPending }} <span class="text-sm text-slate-400 font-bold uppercase tracking-widest">Berkas</span></h2>
                     <div class="mt-2 inline-flex items-center px-3 py-1.5 rounded-xl text-[10px] font-black bg-amber-100/50 text-amber-700 border border-amber-200 uppercase tracking-widest">
                         Perlu Tindakan
                     </div>
@@ -86,9 +86,9 @@
                     </div>
                 </div>
                 <div>
-                    <h2 class="text-3xl font-black text-slate-800 tabular-nums">120 <span class="text-sm text-slate-400 font-bold uppercase tracking-widest">Anggota</span></h2>
+                    <h2 class="text-3xl font-black text-slate-800 tabular-nums">{{ $pinjamanAktif }} <span class="text-sm text-slate-400 font-bold uppercase tracking-widest">Anggota</span></h2>
                     <div class="mt-2 inline-flex items-center px-3 py-1.5 rounded-xl text-[10px] font-black bg-blue-100/50 text-blue-700 border border-blue-200 uppercase tracking-widest">
-                        Rp 1.2M Outstanding
+                        Rp {{ number_format($totalOutstanding) }} Outstanding
                     </div>
                 </div>
             </div>
@@ -124,53 +124,49 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-50">
-                    {{-- Row 1: Menunggu --}}
+                    @forelse($pengajuanTerbaru as $p)
                     <tr class="group hover:bg-blue-50/30 transition-all duration-300">
                         <td class="px-8 py-6">
                             <div class="flex items-center gap-4">
                                 <div class="w-12 h-12 bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl flex items-center justify-center font-black text-slate-600 group-hover:from-blue-600 group-hover:to-blue-700 group-hover:text-white transition-all duration-300 shadow-sm">
-                                    BS
+                                    {{ strtoupper(substr($p->user->name ?? '?', 0, 2)) }}
                                 </div>
                                 <div>
-                                    <p class="text-sm font-black text-slate-800">Budi Santoso</p>
-                                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">IT Department</p>
+                                    <p class="text-sm font-black text-slate-800">{{ $p->user->name ?? 'Unknown' }}</p>
+                                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">{{ $p->loan_number }}</p>
                                 </div>
                             </div>
                         </td>
                         <td class="px-8 py-6">
-                            <p class="text-sm font-black text-slate-800 tabular-nums">Rp 5.000.000</p>
-                            <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5 italic">Dana Darurat</p>
+                            <p class="text-sm font-black text-slate-800 tabular-nums">Rp {{ number_format($p->amount) }}</p>
+                            <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5 italic">{{ $p->purpose ?? '-' }}</p>
                         </td>
-                        <td class="px-8 py-6 text-sm font-bold text-slate-600 tracking-tight">12 <span class="text-[10px] text-slate-400 uppercase">Bulan</span></td>
+                        <td class="px-8 py-6 text-sm font-bold text-slate-600 tracking-tight">{{ $p->tenure_months }} <span class="text-[10px] text-slate-400 uppercase">Bulan</span></td>
                         <td class="px-8 py-6">
-                            <span class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-amber-50 text-amber-700 text-[10px] font-black rounded-xl border border-amber-100 uppercase tracking-wide">
-                                <span class="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></span>
-                                Menunggu Review
+                            <span class="inline-flex items-center gap-1.5 px-4 py-1.5 {{ $p->status === 'pending' ? 'bg-amber-50 text-amber-700 border-amber-100' : 'bg-emerald-50 text-emerald-700 border-emerald-100' }} text-[10px] font-black rounded-xl border uppercase tracking-wide">
+                                <span class="w-1.5 h-1.5 {{ $p->status === 'pending' ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500' }} rounded-full"></span>
+                                {{ $p->status === 'pending' ? 'Menunggu Review' : ucfirst($p->status) }}
                             </span>
                         </td>
                         <td class="px-8 py-6 text-center">
                             <div class="flex items-center justify-center gap-3">
-                                <button title="Lihat Berkas" class="p-3 text-blue-600 bg-blue-50 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm active:scale-90">
+                                <a href="{{ route('pengurus.kelpinjaman') }}" title="Lihat Berkas" class="p-3 text-blue-600 bg-blue-50 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm active:scale-90">
                                     <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                </button>
-                                <button title="Setujui" class="p-3 text-green-600 bg-green-50 rounded-xl hover:bg-green-600 hover:text-white transition-all shadow-sm active:scale-90">
-                                    <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-                                </button>
+                                </a>
+                                <form action="{{ route('pengurus.kelpinjaman.approve', $p) }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="submit" title="Setujui" class="p-3 text-green-600 bg-green-50 rounded-xl hover:bg-green-600 hover:text-white transition-all shadow-sm active:scale-90">
+                                        <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
-                    
-                    {{-- Row 2: Selesai --}}
-                    <tr class="group hover:bg-slate-50 transition-all duration-300 opacity-70">
-                        <td class="px-8 py-6 text-slate-400 italic font-medium text-xs" colspan="4">
-                            Siti Aminah • Rp 3.000.000 • 6 Bulan • <span class="text-green-600 font-bold uppercase ml-2">Sudah Diproses</span>
-                        </td>
-                        <td class="px-8 py-6 text-center">
-                            <div class="px-4 py-1.5 bg-slate-100 text-slate-400 text-[10px] font-black rounded-xl uppercase tracking-widest border border-slate-200">
-                                ARCHIVED
-                            </div>
-                        </td>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="px-8 py-12 text-center font-bold text-slate-400 italic">Tidak ada pengajuan pending.</td>
                     </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

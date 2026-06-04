@@ -5,122 +5,209 @@
 @endsection
 
 @section('content')
-<div class="px-8 py-8 bg-[#f8fafc] min-h-screen space-y-8" x-data="{ activeTab: 'profil', isEditing: false }">
 
-    {{-- ================= HEADER ================= --}}
+@php
+    $authUser = auth()->user();
+@endphp
+
+<div class="px-8 py-8 bg-[#f8fafc] min-h-screen space-y-8 animate-fade-in" x-data="{ tab: 'profil', openEdit: false }">
+
+    @if (session('success'))
+        <div class="bg-emerald-50 border border-emerald-200 rounded-2xl px-6 py-4 text-emerald-700 text-sm font-bold shadow-sm flex items-center gap-3">
+            <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="bg-red-50 border border-red-200 rounded-2xl px-6 py-4 text-red-600 text-sm font-bold shadow-sm">
+            @foreach ($errors->all() as $error)
+                <p>{{ $error }}</p>
+            @endforeach
+        </div>
+    @endif
+    
+    {{-- HEADER --}}
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-            <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Profil Anggota</h1>
-            <p class="text-slate-500 mt-1 font-medium">Kelola informasi pribadi dan keamanan akun Anda.</p>
-        </div>
-        <div class="flex items-center gap-3">
-            <span class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl text-sm font-bold border border-emerald-100">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                Anggota Aktif
-            </span>
-        </div>
-    </div>
-
-    {{-- ================= TABS NAVIGATION ================= --}}
-    <div class="flex gap-4 border-b border-slate-200">
-        <button @click="activeTab = 'profil'" :class="activeTab === 'profil' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-400 hover:text-slate-600'" class="pb-4 px-2 font-black text-sm uppercase tracking-widest border-b-2 transition-colors">
-            Data Pribadi
-        </button>
-        <button @click="activeTab = 'keamanan'" :class="activeTab === 'keamanan' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-400 hover:text-slate-600'" class="pb-4 px-2 font-black text-sm uppercase tracking-widest border-b-2 transition-colors">
-            Keamanan Akun
-        </button>
-    </div>
-
-    {{-- ================= TAB: PROFIL ================= --}}
-    <div x-show="activeTab === 'profil'" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-8">
-        
-        <div class="bg-white p-10 rounded-[2.5rem] shadow-sm border border-slate-100 relative overflow-hidden group">
-            <div class="absolute top-0 right-0 w-48 h-48 bg-blue-50 rounded-bl-[120px] -z-0 transition-transform duration-500 group-hover:scale-110"></div>
-            
-            <div class="relative z-10 flex flex-col lg:flex-row gap-12">
-                
-                {{-- Foto Profil --}}
-                <div class="flex flex-col items-center gap-4">
-                    <div class="w-40 h-40 rounded-[2rem] bg-slate-100 border-4 border-white shadow-xl shadow-slate-200/50 flex items-center justify-center font-black text-6xl text-slate-300 relative group-hover:border-blue-50 transition-all overflow-hidden">
-                        {{ substr(auth()->user()->name ?? 'A', 0, 1) }}
-                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm cursor-pointer">
-                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Form Identitas --}}
-                <div class="flex-1 space-y-6">
-                    <div class="flex items-center justify-between">
-                        <h2 class="text-xl font-black text-slate-800 tracking-tight">Informasi Dasar</h2>
-                        <button @click="isEditing = !isEditing" class="px-5 py-2.5 bg-blue-50 text-blue-600 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all shadow-sm">
-                            <span x-text="isEditing ? 'Batal Edit' : 'Edit Profil'"></span>
-                        </button>
-                    </div>
-
-                    <form class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Nama Lengkap</label>
-                            <input type="text" :disabled="!isEditing" value="{{ auth()->user()->name ?? 'Budi Santoso' }}" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all font-bold text-slate-700 disabled:opacity-70 disabled:cursor-not-allowed">
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Alamat Email</label>
-                            <input type="email" :disabled="!isEditing" value="{{ auth()->user()->email ?? 'budi@mail.com' }}" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all font-bold text-slate-700 disabled:opacity-70 disabled:cursor-not-allowed">
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Nomor Telepon</label>
-                            <input type="text" :disabled="!isEditing" value="081234567890" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all font-bold text-slate-700 disabled:opacity-70 disabled:cursor-not-allowed">
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Nomor KTP (NIK)</label>
-                            <input type="text" disabled value="3271123456789012" class="w-full p-4 bg-slate-100 border border-slate-200 rounded-2xl text-slate-500 outline-none font-bold opacity-70 cursor-not-allowed">
-                        </div>
-                        <div class="md:col-span-2 space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Alamat Domisili</label>
-                            <textarea :disabled="!isEditing" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all font-bold text-slate-700 disabled:opacity-70 disabled:cursor-not-allowed min-h-[100px]">Jl. Merdeka No.45, Jakarta Pusat</textarea>
-                        </div>
-                        
-                        <div class="md:col-span-2 flex justify-end mt-4" x-show="isEditing" x-transition>
-                            <button type="submit" class="px-8 py-4 bg-blue-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 hover:-translate-y-1">
-                                Simpan Perubahan
-                            </button>
-                        </div>
-                    </form>
-                </div>
+        <div class="flex items-center gap-4">
+            <div>
+                <h1 class="text-3xl font-black text-slate-800 tracking-tight">Profil Akun</h1>
+                <p class="text-slate-500 font-medium">Informasi personal dan keamanan akun Anda.</p>
             </div>
         </div>
     </div>
 
-    {{-- ================= TAB: KEAMANAN ================= --}}
-    <div x-show="activeTab === 'keamanan'" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-8" style="display: none;">
-        <div class="bg-white p-10 rounded-[2.5rem] shadow-sm border border-slate-100 relative overflow-hidden">
-            <div class="max-w-2xl">
-                <h2 class="text-xl font-black text-slate-800 tracking-tight mb-2">Ubah Kata Sandi</h2>
-                <p class="text-sm text-slate-500 font-medium mb-8">Pastikan akun Anda menggunakan kata sandi yang panjang dan acak agar tetap aman.</p>
-                
-                <form class="space-y-6">
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Kata Sandi Saat Ini</label>
-                        <input type="password" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 outline-none transition-all font-bold text-slate-700" placeholder="••••••••">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        
+        {{-- MENU KIRI --}}
+        <div class="lg:col-span-1 space-y-2">
+            <button @click="tab = 'profil'" :class="tab === 'profil' ? 'bg-blue-600 text-white shadow-xl shadow-blue-200' : 'bg-white text-slate-600 border border-slate-100'" class="w-full flex items-center gap-3 px-5 py-4 rounded-2xl font-black transition-all shadow-sm hover:bg-blue-50 active:scale-95">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                Profil Saya
+            </button>
+            <button @click="tab = 'keamanan'" :class="tab === 'keamanan' ? 'bg-blue-600 text-white shadow-xl shadow-blue-200' : 'bg-white text-slate-600 border border-slate-100'" class="w-full flex items-center gap-3 px-5 py-4 rounded-2xl font-black transition-all shadow-sm hover:bg-blue-50 active:scale-95">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                Keamanan
+            </button>
+        </div>
+
+        {{-- KONTEN UTAMA --}}
+        <div class="lg:col-span-3">
+            
+            {{-- TAB: PROFIL --}}
+            <div x-show="tab === 'profil'" class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden" x-cloak>
+                <div class="p-10 space-y-10">
+                    <div class="flex flex-col md:flex-row items-center gap-8 border-b border-slate-50 pb-8">
+                        <div class="w-32 h-32 bg-gradient-to-br from-slate-100 to-slate-200 rounded-[2.5rem] flex items-center justify-center font-black text-slate-600 text-4xl shadow-sm">
+                            {{ substr($authUser->name, 0, 1) }}
+                        </div>
+                        <div class="text-center md:text-left">
+                            <h2 class="text-2xl font-black text-slate-800">{{ $authUser->name }}</h2>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mt-1">{{ $authUser->roles->first()->name ?? 'Anggota' }}</p>
+                        </div>
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Kata Sandi Baru</label>
-                        <input type="password" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 outline-none transition-all font-bold text-slate-700" placeholder="••••••••">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <div class="space-y-1">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Nama Lengkap</p>
+                            <p class="text-lg font-bold text-slate-700">{{ $authUser->name }}</p>
+                        </div>
+                        <div class="space-y-1">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Alamat Email</p>
+                            <p class="text-lg font-bold text-slate-700">{{ $authUser->email }}</p>
+                        </div>
+                        <div class="space-y-1">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">No. Telepon</p>
+                            <p class="text-lg font-bold text-slate-700">{{ $authUser->phone ?? '-' }}</p>
+                        </div>
+                        <div class="space-y-1">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">No. KTP (NIK)</p>
+                            <p class="text-lg font-bold text-slate-700">{{ $authUser->nik ?? '-' }}</p>
+                        </div>
+                        <div class="md:col-span-2 space-y-1">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Alamat Domisili</p>
+                            <p class="text-lg font-bold text-slate-700">{{ $authUser->address ?? '-' }}</p>
+                        </div>
+                        <div class="space-y-1">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Terdaftar Sejak</p>
+                            <p class="text-lg font-bold text-slate-700">{{ $authUser->created_at->format('d F Y') }}</p>
+                        </div>
+                        <div class="space-y-1">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Simpanan</p>
+                            <p class="text-lg font-bold text-emerald-600">Rp {{ number_format($totalSimpanan) }}</p>
+                        </div>
+                        <div class="space-y-1">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Pinjaman</p>
+                            <p class="text-lg font-bold text-indigo-600">Rp {{ number_format($totalPinjaman) }}</p>
+                        </div>
+                        <div class="space-y-1">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Transaksi</p>
+                            <p class="text-lg font-bold text-slate-700">{{ number_format($totalTransaksi) }} kali</p>
+                        </div>
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Konfirmasi Kata Sandi Baru</label>
-                        <input type="password" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 outline-none transition-all font-bold text-slate-700" placeholder="••••••••">
-                    </div>
-                    
-                    <div class="pt-4">
-                        <button type="submit" class="px-8 py-4 bg-slate-900 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 hover:-translate-y-1">
-                            Perbarui Sandi
+
+                    <div class="pt-6">
+                        <button @click="openEdit = true" class="group flex items-center gap-2 px-5 py-3.5 bg-blue-600 text-white font-bold rounded-2xl shadow-xl shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                            Edit Profil Akun
                         </button>
                     </div>
+                </div>
+            </div>
+
+            {{-- TAB: KEAMANAN --}}
+            <div x-show="tab === 'keamanan'" class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-10 space-y-8" x-cloak>
+                <h2 class="text-2xl font-black text-slate-800">Ubah Kata Sandi</h2>
+                <form method="POST" action="{{ route('anggota.profil.password') }}" class="max-w-md space-y-6">
+                    @csrf
+                    @method('PUT')
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Password Lama</label>
+                        <input type="password" name="current_password" required class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 transition-all">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Password Baru</label>
+                        <input type="password" name="password" required class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 transition-all">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Konfirmasi Password Baru</label>
+                        <input type="password" name="password_confirmation" required class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 transition-all">
+                    </div>
+                    <button type="submit" class="w-full py-4 bg-slate-800 text-white font-black rounded-2xl hover:bg-slate-900 transition-all active:scale-95">Update Keamanan</button>
                 </form>
             </div>
         </div>
     </div>
 
+    {{-- ================= MODAL EDIT PROFIL ================= --}}
+    <div x-show="openEdit" 
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-cloak>
+
+        <div @click.outside="openEdit = false"
+             class="bg-white w-full max-w-xl rounded-[2.5rem] shadow-2xl overflow-hidden"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 scale-95 translate-y-8"
+             x-transition:enter-end="opacity-100 scale-100 translate-y-0">
+
+            <div class="px-10 py-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+                <div class="flex items-center gap-4">
+                    <div class="p-3 bg-blue-600 rounded-2xl text-white shadow-lg shadow-blue-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                    </div>
+                    <h2 class="font-extrabold text-2xl text-slate-800">Edit Profil</h2>
+                </div>
+                <button @click="openEdit = false" class="text-slate-300 hover:text-rose-500 transition-colors">
+                    <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <div class="p-10">
+                <form method="POST" action="{{ route('anggota.profil.update') }}" class="space-y-6">
+                    @csrf
+                    @method('PUT')
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Nama Lengkap</label>
+                        <input type="text" name="name" value="{{ $authUser->name }}" required class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 transition-all">
+                        @error('name') <p class="text-[10px] font-bold text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">No. Telepon</label>
+                        <input type="text" name="phone" value="{{ $authUser->phone }}" class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 transition-all">
+                        @error('phone') <p class="text-[10px] font-bold text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">No. KTP (NIK)</label>
+                        <input type="text" name="nik" value="{{ $authUser->nik }}" class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 transition-all">
+                        @error('nik') <p class="text-[10px] font-bold text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Alamat Domisili</label>
+                        <textarea name="address" class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 transition-all min-h-[100px]">{{ $authUser->address }}</textarea>
+                        @error('address') <p class="text-[10px] font-bold text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Email (Read Only)</label>
+                        <input type="email" value="{{ $authUser->email }}" readonly class="w-full bg-slate-100 border-none rounded-2xl px-5 py-4 text-sm font-bold text-slate-400 cursor-not-allowed">
+                    </div>
+
+                    <div class="flex items-center gap-3 pt-4">
+                        <button type="button" @click="openEdit = false" class="flex-1 py-4 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors bg-slate-50 rounded-2xl">Batal</button>
+                        <button type="submit" class="flex-[2] py-4 bg-blue-600 text-white font-black rounded-2xl shadow-xl shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95">Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+    [x-cloak] { display: none !important; }
+    @keyframes fade-in { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fade-in 0.6s ease-out forwards; }
+</style>
+
 @endsection

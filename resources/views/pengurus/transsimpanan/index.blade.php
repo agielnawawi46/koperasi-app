@@ -12,7 +12,7 @@
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div class="space-y-1">
             <div class="flex items-center gap-3">
-                <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Log Simpanan Otomatis</h1>
+                <h1 class="text-3xl font-black text-slate-800 tracking-tight">Log Simpanan Otomatis</h1>
             </div>
             <p class="text-slate-500 font-medium ml-1">Data simpanan masuk secara sistematis (Pokok, Wajib, Sukarela).</p>
         </div>
@@ -34,20 +34,19 @@
         </div>
     </div>
 
-    {{-- ================= RINGKASAN CARDS (EXACT MATCH) ================= --}}
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+    {{-- ================= RINGKASAN CARDS ================= --}}
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
         @php
             $stats = [
-                ['label' => 'Total Pokok', 'val' => '250.0M', 'icon' => 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z', 'color' => 'blue'],
-                ['label' => 'Total Wajib', 'val' => '840.5M', 'icon' => 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', 'color' => 'indigo'],
-                ['label' => 'Total Sukarela', 'val' => '150.2M', 'icon' => 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z', 'color' => 'purple'],
-                ['label' => 'Periode Aktif', 'val' => 'APRIL', 'icon' => 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z', 'color' => 'emerald'],
+                ['label' => 'Total Pokok', 'val' => number_format($totalPokok), 'icon' => 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z', 'color' => 'blue'],
+                ['label' => 'Total Wajib', 'val' => number_format($totalWajib), 'icon' => 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', 'color' => 'indigo'],
+                ['label' => 'Total Sukarela', 'val' => number_format($totalSukarela), 'icon' => 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z', 'color' => 'purple'],
+                ['label' => 'Periode Aktif', 'val' => strtoupper(now()->translatedFormat('F Y')), 'icon' => 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z', 'color' => 'emerald'],
             ];
         @endphp
         
         @foreach($stats as $stat)
         <div class="group relative bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-500">
-            {{-- Hover Shape Effect --}}
             <div class="absolute top-0 right-0 w-32 h-32 bg-{{ $stat['color'] }}-50 rounded-bl-[80px] transition-all group-hover:w-full group-hover:h-full group-hover:rounded-none group-hover:opacity-40 duration-700"></div>
             
             <div class="relative z-10 space-y-6">
@@ -104,35 +103,35 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-50">
+                    @forelse($transaksi as $t)
                     <tr class="group hover:bg-blue-50/30 transition-all duration-300">
                         <td class="px-8 py-7">
                             <div class="flex flex-col">
-                                <span class="text-xs font-mono font-black text-blue-600 tracking-tighter">#SYS-260423-001</span>
-                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">23 April, 20:25</span>
+                                <span class="text-xs font-mono font-black text-blue-600 tracking-tighter">#{{ $t->reference ?? 'TRX-'.$t->id }}</span>
+                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{{ $t->created_at->format('d M, H:i') }}</span>
                             </div>
                         </td>
                         <td class="px-8 py-7">
                             <div class="flex items-center gap-4">
                                 <div class="relative">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl flex items-center justify-center font-black text-slate-600 group-hover:scale-110 group-hover:from-blue-600 group-hover:to-blue-700 group-hover:text-white transition-all duration-300">AS</div>
+                                    <div class="w-12 h-12 bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl flex items-center justify-center font-black text-slate-600 group-hover:scale-110 group-hover:from-blue-600 group-hover:to-blue-700 group-hover:text-white transition-all duration-300">{{ strtoupper(substr($t->user->name ?? '?', 0, 2)) }}</div>
                                     <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
                                 </div>
                                 <div>
-                                    <p class="text-sm font-black text-slate-800 tracking-tight">Agiel Syah</p>
-                                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">Software Engineer</p>
+                                    <p class="text-sm font-black text-slate-800 tracking-tight">{{ $t->user->name ?? 'Unknown' }}</p>
+                                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">{{ $t->user->email ?? '' }}</p>
                                 </div>
                             </div>
                         </td>
                         <td class="px-8 py-7">
                             <div class="flex flex-wrap gap-2">
-                                <span class="px-2.5 py-1.5 bg-blue-50 text-blue-700 text-[9px] font-black rounded-xl border border-blue-100/50 uppercase tracking-wide group-hover:bg-blue-100 transition-colors">Wajib: 100k</span>
-                                <span class="px-2.5 py-1.5 bg-purple-50 text-purple-700 text-[9px] font-black rounded-xl border border-purple-100/50 uppercase tracking-wide group-hover:bg-purple-100 transition-colors">Sukarela: 50k</span>
+                                <span class="px-2.5 py-1.5 bg-blue-50 text-blue-700 text-[9px] font-black rounded-xl border border-blue-100/50 uppercase tracking-wide group-hover:bg-blue-100 transition-colors">{{ ucfirst($t->type) }}: Rp {{ number_format($t->amount) }}</span>
                             </div>
                         </td>
                         <td class="px-8 py-7">
                             <div class="flex flex-col">
-                                <p class="text-base font-black tabular-nums text-green-600 group-hover:scale-105 transition-transform origin-left">+ Rp 150.000</p>
-                                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Auto-Debet</span>
+                                <p class="text-base font-black tabular-nums text-green-600 group-hover:scale-105 transition-transform origin-left">+ Rp {{ number_format($t->amount) }}</p>
+                                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ $t->description ?? 'Auto-Debet' }}</span>
                             </div>
                         </td>
                         <td class="px-8 py-7 text-center">
@@ -142,6 +141,11 @@
                             </div>
                         </td>
                     </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="px-8 py-12 text-center font-bold text-slate-400 italic">Belum ada transaksi simpanan.</td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
