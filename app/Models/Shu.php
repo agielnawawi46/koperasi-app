@@ -11,12 +11,22 @@ class Shu extends Model
 
     protected $fillable = [
         'year',
+        'total_income',
+        'total_expenses',
         'total_amount',
         'distributed_amount',
         'remaining_amount',
         'status',
         'notes',
+        'calculated_at',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'calculated_at' => 'datetime',
+        ];
+    }
 
     public function members(): HasMany
     {

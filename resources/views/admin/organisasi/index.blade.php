@@ -128,6 +128,18 @@
                             <span class="text-sm font-bold text-slate-400">Metode Hitung</span>
                             <span class="text-sm font-black text-slate-800 uppercase italic">{{ $organisasi['metode'] ?? 'Belum Diatur' }}</span>
                         </div>
+                        <div class="flex justify-between items-end border-b border-slate-50 pb-2">
+                            <span class="text-sm font-bold text-slate-400">Max Tenor</span>
+                            <span class="text-xl font-black text-slate-800">{{ $organisasi['max_tenor'] ?? '12' }} <span class="text-xs text-slate-400">bln</span></span>
+                        </div>
+                        <div class="flex justify-between items-end border-b border-slate-50 pb-2">
+                            <span class="text-sm font-bold text-slate-400">Max Plafon</span>
+                            <span class="text-xl font-black text-slate-800">{{ $organisasi['max_loan_percentage'] ?? '200' }}% <span class="text-xs text-slate-400">dari simpanan</span></span>
+                        </div>
+                        <div class="flex justify-between items-end border-b border-slate-50 pb-2">
+                            <span class="text-sm font-bold text-slate-400">Max Nominal</span>
+                            <span class="text-xl font-black text-slate-800">{{ $organisasi['max_loan_amount'] > 0 ? 'Rp '.number_format($organisasi['max_loan_amount']) : '∞' }} <span class="text-xs text-slate-400">{{ $organisasi['max_loan_amount'] > 0 ? 'maksimal' : 'tanpa batas' }}</span></span>
+                        </div>
                     </div>
                 </div>
                     <div class="mt-6 p-3 bg-slate-50 rounded-xl space-y-1">
@@ -137,7 +149,76 @@
                         @else
                             <p class="text-[8px] font-bold text-amber-600 italic">Anggota bayar via transfer/bayar langsung tiap tanggal {{ $organisasi['tgl_tagihan'] }}</p>
                         @endif
+                        @if($organisasi['require_active_member'])
+                            <p class="text-[8px] font-bold text-blue-600 italic">Mewajibkan anggota aktif</p>
+                        @endif
                     </div>
+            </div>
+
+            {{-- Prosedur Payroll --}}
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                        </div>
+                        <span class="text-[10px] font-black text-purple-400 uppercase tracking-widest">Logic: Payroll</span>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-end border-b border-slate-50 pb-2">
+                            <span class="text-sm font-bold text-slate-400">Status</span>
+                            <span class="text-sm font-black {{ $organisasi['payroll_enabled'] ? 'text-emerald-600' : 'text-slate-400' }}">{{ $organisasi['payroll_enabled'] ? 'Aktif' : 'Nonaktif' }}</span>
+                        </div>
+                        <div class="flex justify-between items-end border-b border-slate-50 pb-2">
+                            <span class="text-sm font-bold text-slate-400">Tanggal Payroll</span>
+                            <span class="text-xl font-black text-slate-800">Tgl {{ $organisasi['payroll_date'] ?? '25' }}</span>
+                        </div>
+                        <div class="flex justify-between items-end border-b border-slate-50 pb-2">
+                            <span class="text-sm font-bold text-slate-400">Max Potongan</span>
+                            <span class="text-xl font-black text-slate-800">{{ $organisasi['max_salary_deduction'] ?? '30' }}%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 flex items-center gap-2">
+                    <div class="w-2 h-2 {{ $organisasi['payroll_enabled'] ? 'bg-emerald-500' : 'bg-slate-300' }} rounded-full"></div>
+                    <p class="text-xs font-bold text-slate-400">{{ $organisasi['payroll_enabled'] ? 'Potong gaji aktif' : 'Potong gaji nonaktif' }}</p>
+                </div>
+            </div>
+
+            {{-- Prosedur SHU --}}
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.003 9.003 0 003.055 11H11V3.055z"/></svg>
+                        </div>
+                        <span class="text-[10px] font-black text-rose-400 uppercase tracking-widest">Logic: SHU</span>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-end border-b border-slate-50 pb-2">
+                            <span class="text-sm font-bold text-slate-400">Jasa Simpanan</span>
+                            <span class="text-xl font-black text-slate-800">{{ $organisasi['shu_savings_allocation'] ?? '40' }}%</span>
+                        </div>
+                        <div class="flex justify-between items-end border-b border-slate-50 pb-2">
+                            <span class="text-sm font-bold text-slate-400">Jasa Pinjaman</span>
+                            <span class="text-xl font-black text-slate-800">{{ $organisasi['shu_loan_allocation'] ?? '30' }}%</span>
+                        </div>
+                        <div class="flex justify-between items-end border-b border-slate-50 pb-2">
+                            <span class="text-sm font-bold text-slate-400">Dana Cadangan</span>
+                            <span class="text-xl font-black text-slate-800">{{ $organisasi['shu_reserve_allocation'] ?? '20' }}%</span>
+                        </div>
+                        <div class="flex justify-between items-end border-b border-slate-50 pb-2">
+                            <span class="text-sm font-bold text-slate-400">Dana Sosial</span>
+                            <span class="text-xl font-black text-slate-800">{{ $organisasi['shu_social_allocation'] ?? '10' }}%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 p-3 bg-slate-50 rounded-xl flex items-center justify-between">
+                    <span class="text-[10px] font-bold text-slate-500">Total Alokasi</span>
+                    <span class="text-sm font-black text-emerald-600">
+                        {{ (($organisasi['shu_savings_allocation'] ?? 40) + ($organisasi['shu_loan_allocation'] ?? 30) + ($organisasi['shu_reserve_allocation'] ?? 20) + ($organisasi['shu_social_allocation'] ?? 10)) }}%
+                    </span>
+                </div>
             </div>
 
         </div>
@@ -278,6 +359,63 @@
                             </select>
                         </div>
                     </div>
+                    <div class="grid grid-cols-4 gap-4 mt-4">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Max Tenor (bln)</label>
+                            <input type="number" name="max_tenor" value="{{ $organisasi['max_tenor'] ?? '12' }}" class="w-full p-4 bg-amber-50/30 border border-amber-100 rounded-2xl font-black text-amber-700 outline-none focus:ring-2 focus:ring-amber-500">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Max Plafon (% simpanan)</label>
+                            <input type="number" step="0.1" name="max_loan_percentage" value="{{ $organisasi['max_loan_percentage'] ?? '200' }}" class="w-full p-4 bg-amber-50/30 border border-amber-100 rounded-2xl font-black text-amber-700 outline-none focus:ring-2 focus:ring-amber-500">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Max Nominal (Rp)</label>
+                            <input type="number" name="max_loan_amount" value="{{ $organisasi['max_loan_amount'] ?? '0' }}" class="w-full p-4 bg-amber-50/30 border border-amber-100 rounded-2xl font-black text-amber-700 outline-none focus:ring-2 focus:ring-amber-500" placeholder="0 = tanpa batas">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Minimal Kas (Rp)</label>
+                            <input type="number" name="minimum_cash_reserve" value="{{ $organisasi['minimum_cash_reserve'] ?? '0' }}" class="w-full p-4 bg-amber-50/30 border border-amber-100 rounded-2xl font-black text-amber-700 outline-none focus:ring-2 focus:ring-amber-500">
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center gap-3">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="hidden" name="require_active_member" value="0">
+                            <input type="checkbox" name="require_active_member" value="1" class="sr-only peer" {{ $organisasi['require_active_member'] ? 'checked' : '' }}>
+                            <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:bg-amber-600 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                        </label>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Wajib Anggota Aktif</span>
+                    </div>
+                </div>
+
+                <div class="pt-6 border-t border-slate-50">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                        </div>
+                        <p class="text-xs font-black uppercase tracking-widest text-slate-400">Konfigurasi Payroll</p>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="hidden" name="payroll_enabled" value="0">
+                                <input type="checkbox" name="payroll_enabled" value="1" class="sr-only peer" {{ $organisasi['payroll_enabled'] ? 'checked' : '' }}>
+                                <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:bg-purple-600 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                            </label>
+                            <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Aktifkan Payroll</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Tanggal Payroll</label>
+                                <select name="payroll_date" class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-purple-500 transition-all appearance-none cursor-pointer">
+                                    @for($i=1; $i<=28; $i++) <option value="{{ $i }}" {{ ($organisasi['payroll_date'] ?? '25') == $i ? 'selected' : '' }}>Tanggal {{ $i }}</option> @endfor
+                                </select>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Max Potongan Gaji (%)</label>
+                                <input type="number" step="0.1" name="max_salary_deduction" value="{{ $organisasi['max_salary_deduction'] ?? '30' }}" class="w-full p-4 bg-purple-50/30 border border-purple-100 rounded-2xl font-black text-purple-700 outline-none focus:ring-2 focus:ring-purple-500">
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="pt-6 border-t border-slate-50">
@@ -319,6 +457,38 @@
                     </div>
                 </div>
 
+                <div class="pt-6 border-t border-slate-50" x-data="shuApp()">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-8 h-8 bg-rose-100 rounded-lg flex items-center justify-center text-rose-600">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.003 9.003 0 003.055 11H11V3.055z"/></svg>
+                        </div>
+                        <p class="text-xs font-black uppercase tracking-widest text-slate-400">Konfigurasi SHU</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Jasa Simpanan (%)</label>
+                            <input type="number" step="0.1" name="shu_savings_allocation" x-model="savings" value="{{ $organisasi['shu_savings_allocation'] ?? '40' }}" class="w-full p-4 bg-rose-50/30 border border-rose-100 rounded-2xl font-black text-rose-700 outline-none focus:ring-2 focus:ring-rose-500">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Jasa Pinjaman (%)</label>
+                            <input type="number" step="0.1" name="shu_loan_allocation" x-model="loans" value="{{ $organisasi['shu_loan_allocation'] ?? '30' }}" class="w-full p-4 bg-rose-50/30 border border-rose-100 rounded-2xl font-black text-rose-700 outline-none focus:ring-2 focus:ring-rose-500">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Dana Cadangan (%)</label>
+                            <input type="number" step="0.1" name="shu_reserve_allocation" x-model="reserve" value="{{ $organisasi['shu_reserve_allocation'] ?? '20' }}" class="w-full p-4 bg-rose-50/30 border border-rose-100 rounded-2xl font-black text-rose-700 outline-none focus:ring-2 focus:ring-rose-500">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Dana Sosial (%)</label>
+                            <input type="number" step="0.1" name="shu_social_allocation" x-model="social" value="{{ $organisasi['shu_social_allocation'] ?? '10' }}" class="w-full p-4 bg-rose-50/30 border border-rose-100 rounded-2xl font-black text-rose-700 outline-none focus:ring-2 focus:ring-rose-500">
+                        </div>
+                    </div>
+                    <div class="mt-4 p-4 rounded-2xl font-black text-sm text-center"
+                         :class="total === 100 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'">
+                        Total Alokasi: <span x-text="total"></span>%
+                        <span x-show="total !== 100" class="text-[10px] font-bold block mt-1">Harus berjumlah 100%</span>
+                    </div>
+                </div>
+
                 <div class="flex items-center gap-4 pt-4 border-t border-slate-50">
                     <button type="button" onclick="closeProsedurModal()" class="flex-1 py-4 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors bg-slate-50 rounded-2xl">Batal</button>
                     <button type="submit" class="flex-[2] py-4 bg-emerald-600 text-white text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-emerald-700 shadow-xl shadow-emerald-200 transition-all active:scale-95">Simpan Prosedur</button>
@@ -326,6 +496,20 @@
             </form>
         </div>
     </div>
+
+<script>
+    function shuApp() {
+        return {
+            savings: {{ $organisasi['shu_savings_allocation'] ?? 40 }},
+            loans: {{ $organisasi['shu_loan_allocation'] ?? 30 }},
+            reserve: {{ $organisasi['shu_reserve_allocation'] ?? 20 }},
+            social: {{ $organisasi['shu_social_allocation'] ?? 10 }},
+            get total() {
+                return Number(this.savings) + Number(this.loans) + Number(this.reserve) + Number(this.social);
+            }
+        };
+    }
+</script>
 @endpush
 </div>
 

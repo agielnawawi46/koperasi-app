@@ -20,10 +20,13 @@ class ShuSeeder extends Seeder
 
             $shu = Shu::create([
                 'year' => $year,
+                'total_income' => $totalAmount + fake()->numberBetween(1000000, 5000000),
+                'total_expenses' => fake()->numberBetween(1000000, 5000000),
                 'total_amount' => $totalAmount,
                 'distributed_amount' => $distributedAmount,
                 'remaining_amount' => $totalAmount - $distributedAmount,
                 'status' => $year === 2025 ? 'open' : 'closed',
+                'calculated_at' => $year === 2024 ? now()->subMonths(3) : null,
             ]);
 
             $perMember = round($distributedAmount / max(1, $users->count()), 2);

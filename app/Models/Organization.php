@@ -16,7 +16,18 @@ class Organization extends Model
         'bunga_rate',
         'metode',
         'payment_method',
-        'tgl_tagihan',
+        'payroll_enabled',
+        'payroll_date',
+        'max_salary_deduction',
+        'max_tenor',
+        'max_loan_percentage',
+        'max_loan_amount',
+        'minimum_cash_reserve',
+        'require_active_member',
+        'shu_savings_allocation',
+        'shu_loan_allocation',
+        'shu_reserve_allocation',
+        'shu_social_allocation',
         'phone',
         'website',
         'logo',
@@ -24,4 +35,12 @@ class Organization extends Model
         'bank_account_name',
         'bank_account_number',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'payroll_enabled' => 'boolean',
+            'require_active_member' => 'boolean',
+        ];
+    }
 }
