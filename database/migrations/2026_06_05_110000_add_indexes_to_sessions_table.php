@@ -1,26 +1,37 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
     public function up(): void
     {
-        $existingIndexes = collect(DB::select('SHOW INDEX FROM sessions'))->pluck('Key_name');
-
-        if (! $existingIndexes->contains('sessions_user_id_index')) {
-            DB::statement('ALTER TABLE sessions ADD INDEX sessions_user_id_index (user_id)');
+        if (DB::getDriverName() === 'sqlite') {
+            return;
         }
 
-        if (! $existingIndexes->contains('sessions_last_activity_index')) {
-            DB::statement('ALTER TABLE sessions ADD INDEX sessions_last_activity_index (last_activity)');
-        }
+        Schema::table('sessions', function (Blueprint $table) {
+            if (! Schema::hasIndex('sessions', 'sessions_user_id_index')) {
+                $table->index('user_id', 'sessions_user_id_index');
+            }
+            if (! Schema::hasIndex('sessions', 'sessions_last_activity_index')) {
+                $table->index('last_activity', 'sessions_last_activity_index');
+            }
+        });
     }
 
     public function down(): void
     {
-        DB::statement('ALTER TABLE sessions DROP INDEX sessions_user_id_index');
-        DB::statement('ALTER TABLE sessions DROP INDEX sessions_last_activity_index');
+        if (DB::getDriverName() === 'sqlite') {
+            return;
+        }
+
+        Schema::table('sessions', function (Blueprint $table) {
+            $table->dropIndex('sessions_user_id_index');
+            $table->dropIndex('sessions_last_activity_index');
+        });
     }
 };

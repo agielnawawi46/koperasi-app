@@ -22,6 +22,8 @@ class Loan extends Model
         'payment_method',
         'approved_by',
         'approved_at',
+        'disbursed_by',
+        'disbursed_at',
         'notes',
     ];
 
@@ -29,6 +31,7 @@ class Loan extends Model
     {
         return [
             'approved_at' => 'datetime',
+            'disbursed_at' => 'datetime',
         ];
     }
 
@@ -40,6 +43,11 @@ class Loan extends Model
     public function approvedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function disbursedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'disbursed_by');
     }
 
     public function installments(): HasMany

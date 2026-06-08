@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\Installment;
 use App\Models\Loan;
-use App\Models\Saving;
-use App\Models\SavingsTransaction;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -87,25 +85,6 @@ class InputAngsuranController extends Controller
             'status' => 'paid',
             'paid_date' => now(),
             'payment_method' => $paymentMethod,
-        ]);
-
-        $saving = Saving::firstOrCreate(
-            ['user_id' => $loan->user_id, 'type' => 'sukarela'],
-            ['balance' => 0]
-        );
-
-        $saving->increment('balance', $request->amount);
-
-        SavingsTransaction::create([
-            'saving_id' => $saving->id,
-            'user_id' => $loan->user_id,
-            'type' => 'credit',
-            'amount' => $request->amount,
-            'payment_method' => $paymentMethod,
-            'status' => 'approved',
-            'verified_by' => $request->user()->id,
-            'verified_at' => now(),
-            'description' => 'Pembayaran angsuran ke-'.$angsuran->installment_number.' ('.$loan->loan_number.')',
         ]);
 
         $sisaPending = Installment::where('loan_id', $loan->id)

@@ -122,7 +122,11 @@ class KelolaPinjamanController extends Controller
             return back()->with('error', 'Pinjaman harus disetujui terlebih dahulu.');
         }
 
-        $loan->update(['status' => 'active']);
+        $loan->update([
+            'status' => 'active',
+            'disbursed_by' => $request->user()->id,
+            'disbursed_at' => now(),
+        ]);
 
         ActivityLog::create([
             'user_id' => $request->user()->id,

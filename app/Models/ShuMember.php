@@ -11,6 +11,8 @@ class ShuMember extends Model
         'shu_id',
         'user_id',
         'amount',
+        'modal_amount',
+        'member_amount',
         'status',
         'distributed_at',
         'distribution_method',
