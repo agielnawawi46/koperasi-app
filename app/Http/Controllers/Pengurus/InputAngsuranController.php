@@ -19,7 +19,15 @@ class InputAngsuranController extends Controller
             ->whereIn('status', ['approved', 'active'])
             ->get();
 
-        return view('pengurus.inpangsuran.index', compact('pinjamanAktif'));
+        $loanList = $pinjamanAktif->map(fn ($l) => [
+            'id' => $l->id,
+            'loan_number' => $l->loan_number,
+            'amount' => $l->amount,
+            'status' => $l->status,
+            'user' => ['name' => $l->user?->name ?? 'Unknown'],
+        ])->values();
+
+        return view('pengurus.inpangsuran.index', compact('pinjamanAktif', 'loanList'));
     }
 
     public function getDataPinjaman(Loan $loan)
@@ -56,22 +64,29 @@ class InputAngsuranController extends Controller
         $request->validate([
             'loan_id' => 'required|exists:loans,id',
             'amount' => 'required|numeric|min:0',
+            'payment_method' => 'nullable|string|in:transfer_bank,bayar_langsung',
         ]);
 
         $loan = Loan::findOrFail($request->loan_id);
+        $paymentMethod = $request->payment_method ?? 'bayar_langsung';
 
         $angsuran = Installment::where('loan_id', $loan->id)
             ->where('status', 'pending')
             ->orderBy('installment_number')
             ->first();
 
-        if (!$angsuran) {
+        if (! $angsuran) {
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Semua angsuran sudah lunas.']);
+            }
+
             return back()->with('error', 'Semua angsuran sudah lunas.');
         }
 
         $angsuran->update([
             'status' => 'paid',
             'paid_date' => now(),
+            'payment_method' => $paymentMethod,
         ]);
 
         $saving = Saving::firstOrCreate(
@@ -86,7 +101,11 @@ class InputAngsuranController extends Controller
             'user_id' => $loan->user_id,
             'type' => 'credit',
             'amount' => $request->amount,
-            'description' => 'Pembayaran angsuran ke-' . $angsuran->installment_number . ' (' . $loan->loan_number . ')',
+            'payment_method' => $paymentMethod,
+            'status' => 'approved',
+            'verified_by' => $request->user()->id,
+            'verified_at' => now(),
+            'description' => 'Pembayaran angsuran ke-'.$angsuran->installment_number.' ('.$loan->loan_number.')',
         ]);
 
         $sisaPending = Installment::where('loan_id', $loan->id)
@@ -100,10 +119,14 @@ class InputAngsuranController extends Controller
         ActivityLog::create([
             'user_id' => $request->user()->id,
             'action' => 'input_installment',
-            'description' => 'Input angsuran ke-' . $angsuran->installment_number . ' untuk ' . $loan->loan_number,
+            'description' => 'Input angsuran ke-'.$angsuran->installment_number.' untuk '.$loan->loan_number.' via '.$paymentMethod,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
+
+        if ($request->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Angsuran berhasil dicatat!']);
+        }
 
         return redirect()->route('pengurus.inpangsuran')->with('success', 'Angsuran berhasil dicatat!');
     }

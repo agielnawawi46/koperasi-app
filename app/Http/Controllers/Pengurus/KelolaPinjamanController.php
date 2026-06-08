@@ -7,7 +7,6 @@ use App\Models\ActivityLog;
 use App\Models\Installment;
 use App\Models\Loan;
 use App\Models\Organization;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -47,7 +46,7 @@ class KelolaPinjamanController extends Controller
         $monthlyPayment = $totalPayment / $request->tenure_months;
 
         $loan = Loan::create([
-            'loan_number' => 'PJM-' . now()->format('Ymd') . '-' . str_pad((string)(Loan::max('id') + 1), 4, '0', STR_PAD_LEFT),
+            'loan_number' => 'PJM-'.now()->format('Ymd').'-'.str_pad((string) (Loan::max('id') + 1), 4, '0', STR_PAD_LEFT),
             'user_id' => $request->user_id,
             'amount' => $request->amount,
             'interest_rate' => $bungaRate,
@@ -62,7 +61,7 @@ class KelolaPinjamanController extends Controller
         ActivityLog::create([
             'user_id' => $request->user()->id,
             'action' => 'create_loan',
-            'description' => 'Membuat pinjaman baru: ' . $loan->loan_number,
+            'description' => 'Membuat pinjaman baru: '.$loan->loan_number,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
@@ -87,7 +86,7 @@ class KelolaPinjamanController extends Controller
         ActivityLog::create([
             'user_id' => $request->user()->id,
             'action' => 'approve_loan',
-            'description' => 'Menyetujui pinjaman: ' . $loan->loan_number,
+            'description' => 'Menyetujui pinjaman: '.$loan->loan_number,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
@@ -109,7 +108,7 @@ class KelolaPinjamanController extends Controller
         ActivityLog::create([
             'user_id' => $request->user()->id,
             'action' => 'reject_loan',
-            'description' => 'Menolak pinjaman: ' . $loan->loan_number,
+            'description' => 'Menolak pinjaman: '.$loan->loan_number,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
@@ -128,7 +127,7 @@ class KelolaPinjamanController extends Controller
         ActivityLog::create([
             'user_id' => $request->user()->id,
             'action' => 'disburse_loan',
-            'description' => 'Mencairkan pinjaman: ' . $loan->loan_number,
+            'description' => 'Mencairkan pinjaman: '.$loan->loan_number,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);

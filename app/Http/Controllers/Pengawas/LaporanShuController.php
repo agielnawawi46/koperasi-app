@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Pengawas;
 
 use App\Http\Controllers\Controller;
-use App\Models\Installment;
 use App\Models\Loan;
 use App\Models\SavingsTransaction;
 use App\Models\Shu;
@@ -51,7 +50,7 @@ class LaporanShuController extends Controller
                 return [
                     'tanggal' => $member->created_at->format('d M Y'),
                     'kategori' => 'SHU',
-                    'deskripsi' => 'Distribusi SHU ' . ($member->shu?->year ?? '-') . ' - ' . ($member->user?->name ?? '-'),
+                    'deskripsi' => 'Distribusi SHU '.($member->shu?->year ?? '-').' - '.($member->user?->name ?? '-'),
                     'nominal' => $member->amount,
                     'status' => $member->status === 'distributed' ? 'Terverifikasi' : 'Pending',
                 ];

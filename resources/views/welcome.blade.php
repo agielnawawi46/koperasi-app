@@ -35,8 +35,8 @@
             <a href="#fitur" class="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 hover:text-slate-900 transition-colors">Fitur</a>
             <a href="#tentang" class="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 hover:text-slate-900 transition-colors">Tentang</a>
             <a href="#kontak" class="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 hover:text-slate-900 transition-colors">Kontak</a>
-            <a href="{{ auth()->check() ? url('/dashboard') : route('login') }}" class="px-6 py-3 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all shadow-lg shadow-slate-200">
-                {{ auth()->check() ? 'Dashboard' : 'Masuk' }}
+            <a href="{{ route('login') }}" class="px-6 py-3 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all shadow-lg shadow-slate-200">
+                Masuk
             </a>
         </div>
         <button @click="mobileOpen = !mobileOpen" class="md:hidden p-2 text-slate-600">
@@ -49,7 +49,7 @@
         <a href="#fitur" @click="mobileOpen = false" class="block px-4 py-3 text-xs font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 rounded-xl">Fitur</a>
         <a href="#tentang" @click="mobileOpen = false" class="block px-4 py-3 text-xs font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 rounded-xl">Tentang</a>
         <a href="#kontak" @click="mobileOpen = false" class="block px-4 py-3 text-xs font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 rounded-xl">Kontak</a>
-        <a href="{{ auth()->check() ? url('/dashboard') : route('login') }}" class="block px-4 py-3 text-xs font-black uppercase tracking-widest text-white bg-slate-900 rounded-xl text-center">{{ auth()->check() ? 'Dashboard' : 'Masuk' }}</a>
+        <a href="{{ route('login') }}" class="block px-4 py-3 text-xs font-black uppercase tracking-widest text-white bg-slate-900 rounded-xl text-center">Masuk</a>
     </div>
 </header>
 
@@ -76,8 +76,8 @@
                         </p>
                     </div>
                     <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                        <a href="{{ auth()->check() ? url('/dashboard') : route('login') }}" class="group inline-flex items-center gap-3 px-8 py-5 bg-slate-900 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-blue-600 transition-all shadow-xl shadow-slate-200 active:scale-[0.97]">
-                            {{ auth()->check() ? 'Buka Dashboard' : 'Mulai Sekarang' }}
+                        <a href="{{ route('login') }}" class="group inline-flex items-center gap-3 px-8 py-5 bg-slate-900 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-blue-600 transition-all shadow-xl shadow-slate-200 active:scale-[0.97]">
+                            Mulai Sekarang
                             <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                         </a>
                         <a href="#fitur" class="text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors flex items-center gap-2">

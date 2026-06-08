@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
+use App\Models\Organization;
+use App\Models\Saving;
+use App\Models\SavingsTransaction;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -67,6 +70,30 @@ class UserManagementController extends Controller
         ]);
 
         $user->assignRole($request->role);
+
+        // Auto-create simpanan pokok for new anggota
+        if ($request->role === 'anggota') {
+            $org = Organization::first();
+            $pokokAmount = $org?->pokok_amount ?? 500000;
+
+            $saving = Saving::create([
+                'user_id' => $user->id,
+                'type' => 'pokok',
+                'balance' => $pokokAmount,
+            ]);
+
+            SavingsTransaction::create([
+                'saving_id' => $saving->id,
+                'user_id' => $user->id,
+                'type' => 'setor',
+                'amount' => $pokokAmount,
+                'description' => 'Setoran awal simpanan pokok',
+                'transaction_date' => now(),
+                'status' => 'approved',
+                'payment_method' => 'otomatis',
+                'verified_at' => now(),
+            ]);
+        }
 
         ActivityLog::create([
             'user_id' => $request->user()->id,

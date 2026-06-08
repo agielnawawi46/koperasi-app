@@ -4,21 +4,27 @@ namespace App\Http\Controllers\Pengurus;
 
 use App\Http\Controllers\Controller;
 use App\Models\Loan;
-use App\Models\Saving;
+use App\Models\SavingsTransaction;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
     public function index(): View
     {
-        $simpananBulanIni = Saving::whereMonth('created_at', now()->month)
-            ->whereYear('created_at', now()->year)
-            ->sum('balance');
+        $simpananBulanIni = SavingsTransaction::where('status', 'approved')
+            ->whereMonth('transaction_date', now()->month)
+            ->whereYear('transaction_date', now()->year)
+            ->sum('amount');
 
-        $pengajuanPending = Loan::where('status', 'pending')->count();
+        $loanStats = Loan::selectRaw("
+            COALESCE(SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END), 0) as pengajuan_pending,
+            COALESCE(SUM(CASE WHEN status IN ('active','approved') THEN 1 ELSE 0 END), 0) as pinjaman_aktif,
+            COALESCE(SUM(CASE WHEN status IN ('active','approved') THEN total_payment ELSE 0 END), 0) as total_outstanding
+        ")->first();
 
-        $pinjamanAktif = Loan::whereIn('status', ['active', 'approved'])->count();
-        $totalOutstanding = Loan::whereIn('status', ['active', 'approved'])->sum('total_payment');
+        $pengajuanPending = $loanStats->pengajuan_pending;
+        $pinjamanAktif = $loanStats->pinjaman_aktif;
+        $totalOutstanding = $loanStats->total_outstanding;
 
         $pengajuanTerbaru = Loan::with('user')
             ->where('status', 'pending')

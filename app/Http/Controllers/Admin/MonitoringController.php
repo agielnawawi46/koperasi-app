@@ -13,12 +13,14 @@ class MonitoringController extends Controller
 {
     public function index(): View
     {
-        $logs = ActivityLog::with('user')->latest()->paginate(20);
+        $recentLogs = ActivityLog::with('user')->latest()->take(10)->get();
 
         $totalLogs = ActivityLog::count();
         $totalUsers = User::count();
         $totalLoans = Loan::count();
         $totalSavings = Saving::count();
+        $loginBerhasil = ActivityLog::where('action', 'login')->count();
+        $loginGagal = ActivityLog::where('action', 'login_failed')->count();
 
         $logsPerDay = ActivityLog::selectRaw('DATE(created_at) as date, COUNT(*) as count')
             ->where('created_at', '>=', now()->subDays(7))
@@ -33,8 +35,8 @@ class MonitoringController extends Controller
             ->get();
 
         return view('admin.monitoring.index', compact(
-            'logs', 'totalLogs', 'totalUsers', 'totalLoans', 'totalSavings',
-            'logsPerDay', 'topActions'
+            'recentLogs', 'totalLogs', 'totalUsers', 'totalLoans', 'totalSavings',
+            'loginBerhasil', 'loginGagal', 'logsPerDay', 'topActions'
         ));
     }
 }

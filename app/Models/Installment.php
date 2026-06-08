@@ -18,6 +18,7 @@ class Installment extends Model
         'status',
         'fine_amount',
         'payment_reference',
+        'payment_method',
         'notes',
     ];
 

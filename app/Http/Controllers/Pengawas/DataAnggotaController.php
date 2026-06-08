@@ -18,7 +18,7 @@ class DataAnggotaController extends Controller
                 return [
                     'inisial' => strtoupper(substr($user->name, 0, 2)),
                     'nama' => $user->name,
-                    'id_anggota' => $user->member_code ?? 'KOP-' . str_pad((string)$user->id, 4, '0', STR_PAD_LEFT),
+                    'id_anggota' => $user->member_code ?? 'KOP-'.str_pad((string) $user->id, 4, '0', STR_PAD_LEFT),
                     'status' => $user->status === 'active' ? 'Aktif' : 'Nonaktif',
                     'tanggal_bergabung' => $user->join_date?->format('d M Y') ?? '-',
                     'id' => $user->id,

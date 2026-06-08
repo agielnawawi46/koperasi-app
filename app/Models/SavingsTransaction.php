@@ -15,12 +15,17 @@ class SavingsTransaction extends Model
         'description',
         'transaction_date',
         'reference',
+        'status',
+        'payment_method',
+        'verified_by',
+        'verified_at',
     ];
 
     protected function casts(): array
     {
         return [
             'transaction_date' => 'date',
+            'verified_at' => 'datetime',
         ];
     }
 
@@ -32,5 +37,10 @@ class SavingsTransaction extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function verifier(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'verified_by');
     }
 }

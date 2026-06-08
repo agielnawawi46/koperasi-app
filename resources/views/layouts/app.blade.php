@@ -6,18 +6,19 @@
     <title>DanaKarya</title>
     @vite('resources/css/app.css')
     <script src="//unpkg.com/alpinejs" defer></script>
+    <style>[x-cloak]{display:none!important}</style>
 </head>
 <body class="bg-gray-100 antialiased">
-<div class="flex min-h-screen w-full overflow-x-hidden">
+<div class="flex min-h-screen w-full overflow-x-clip">
 
     {{-- Sidebar akan diisi oleh layout turunan --}}
     @yield('sidebar')
 
-    <div class="flex-1 min-w-0 flex flex-col overflow-x-hidden">
+    <div class="flex-1 min-w-0 flex flex-col overflow-x-clip">
 
         @include('layouts.partials.header')
 
-        <main class="flex-1 p-6">
+        <main class="flex-1 bg-[#f8fafc]">
             @yield('content')
         </main>
 
@@ -25,5 +26,6 @@
 
     </div>
 </div>
+@stack('modals')
 </body>
 </html>

@@ -25,6 +25,7 @@ class User extends Authenticatable
         'status',
         'join_date',
         'avatar',
+        'base_salary',
     ];
 
     protected $hidden = [

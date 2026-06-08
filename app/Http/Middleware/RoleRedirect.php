@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Spatie\Permission\Exceptions\RoleDoesNotExist;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,7 +41,7 @@ class RoleRedirect
         return $next($request);
     }
 
-    private function redirectToRoleDashboard($user): \Illuminate\Http\RedirectResponse
+    private function redirectToRoleDashboard($user): RedirectResponse
     {
         $roleRoutes = [
             'super_admin' => '/super-admin/dashboard',

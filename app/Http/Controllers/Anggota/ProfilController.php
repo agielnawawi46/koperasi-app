@@ -35,6 +35,7 @@ class ProfilController extends Controller
             'phone' => ['nullable', 'string', 'max:20'],
             'nik' => ['nullable', 'string', 'max:30'],
             'address' => ['nullable', 'string', 'max:500'],
+            'base_salary' => ['nullable', 'numeric', 'min:0'],
         ]);
 
         $user->update($validated);

@@ -7,7 +7,7 @@
 @section('content')
 
 {{-- Container utama harus 'relative' untuk posisi Floating Filter --}}
-<div class="relative px-8 py-8 bg-[#f8fafc] min-h-screen space-y-8 animate-fade-in">
+<div class="relative px-8 py-8 space-y-8 animate-fade-in">
 
     {{-- ================= HEADER ================= --}}
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -123,99 +123,132 @@
         </div>
     </div>
 
-    {{-- ================= LOAN TABLE ================= --}}
-    <div class="bg-white rounded-[3rem] shadow-sm border border-slate-100 overflow-hidden animate-slide-up mt-8">
-        <div class="p-8 border-b border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-gradient-to-r from-white to-slate-50/50">
-            <div class="flex items-center gap-5">
-                <div class="w-14 h-14 bg-blue-600 rounded-[1.3rem] flex items-center justify-center text-white shadow-xl shadow-blue-100 rotate-3 group hover:rotate-0 transition-transform duration-300">
-                    <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                </div>
-                <div>
-                    <h2 class="text-xl font-black text-slate-800 tracking-tight">Daftar Pengajuan & Pinjaman</h2>
-                    <p class="text-sm text-slate-400 font-medium italic">Manajemen transaksi pinjaman anggota.</p>
-                </div>
+    {{-- ================= RIWAYAT ACCORDION ================= --}}
+    <div x-data="{ expanded: null }" class="space-y-4 animate-slide-up mt-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-2xl font-black text-slate-800">Daftar Pengajuan & Pinjaman</h2>
+                <p class="text-sm text-slate-400 font-medium">{{ count($pinjaman) }} data pinjaman tercatat</p>
             </div>
         </div>
 
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead>
-                    <tr class="bg-slate-50/50">
-                        <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Peminjam</th>
-                        <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Informasi Pinjaman</th>
-                        <th class="px-8 py-5 text-center text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Status</th>
-                        <th class="px-8 py-5 text-right text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-50">
-                    @forelse($pinjaman as $p)
-                    <tr class="group hover:bg-amber-50/30 transition-all duration-300">
-                        <td class="px-8 py-7">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center font-black text-slate-600 group-hover:bg-amber-100 group-hover:text-amber-700 transition-all">{{ strtoupper(substr($p->user->name ?? '?', 0, 2)) }}</div>
-                                <div>
-                                    <p class="text-sm font-black text-slate-800">{{ $p->user->name ?? 'Unknown' }}</p>
-                                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">{{ $p->loan_number }}</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-8 py-7">
-                            <div class="flex flex-col">
-                                <span class="text-sm font-black text-slate-700 tracking-tight">Rp {{ number_format($p->amount) }}</span>
-                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{{ $p->tenure_months }} Bln | Bunga {{ $p->interest_rate }}%</span>
-                            </div>
-                        </td>
-                        <td class="px-8 py-7 text-center">
-                            @php
-                                $statusColors = ['pending' => 'bg-amber-50 text-amber-600 border-amber-200/50', 'approved' => 'bg-blue-50 text-blue-600 border-blue-200/50', 'active' => 'bg-emerald-50 text-emerald-600 border-emerald-200/50', 'rejected' => 'bg-red-50 text-red-600 border-red-200/50', 'paid' => 'bg-slate-50 text-slate-600 border-slate-200/50'];
-                                $statusLabels = ['pending' => 'Waiting', 'approved' => 'Disetujui', 'active' => 'Aktif', 'rejected' => 'Ditolak', 'paid' => 'Lunas'];
-                            @endphp
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 {{ $statusColors[$p->status] ?? 'bg-slate-50 text-slate-600' }} text-[10px] font-black rounded-xl border uppercase tracking-widest">
-                                <span class="w-1.5 h-1.5 {{ $p->status === 'pending' ? 'bg-amber-500 animate-ping' : ($p->status === 'active' ? 'bg-emerald-500' : 'bg-slate-400') }} rounded-full"></span>
-                                {{ $statusLabels[$p->status] ?? ucfirst($p->status) }}
-                            </span>
-                        </td>
-                        <td class="px-8 py-7 text-right">
-                            @if($p->status === 'pending')
-                            <div class="flex justify-end gap-2">
-                                <form action="{{ route('pengurus.kelpinjaman.approve', $p) }}" method="POST" class="inline">
-                                    @csrf
-                                    <button type="submit" class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm">
-                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-                                    </button>
-                                </form>
-                                <form action="{{ route('pengurus.kelpinjaman.reject', $p) }}" method="POST" class="inline">
-                                    @csrf
-                                    <button type="submit" class="p-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-sm">
-                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
-                                    </button>
-                                </form>
-                            </div>
-                            @elseif($p->status === 'approved')
-                            <form action="{{ route('pengurus.kelpinjaman.cairkan', $p) }}" method="POST" class="inline">
-                                @csrf
-                                <button type="submit" class="p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm text-[9px] font-black uppercase tracking-widest px-3">
-                                    Cairkan
-                                </button>
-                            </form>
-                            @else
-                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ $p->status }}</span>
-                            @endif
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="4" class="px-8 py-12 text-center font-bold text-slate-400 italic">Tidak ada data pinjaman.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+        @forelse($pinjaman as $p)
+        @php
+            $statusColors = [
+                'pending'  => 'bg-amber-50 text-amber-700 border-amber-200',
+                'approved' => 'bg-blue-50 text-blue-700 border-blue-200',
+                'active'   => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                'rejected' => 'bg-rose-50 text-rose-700 border-rose-200',
+                'paid'     => 'bg-slate-50 text-slate-700 border-slate-200',
+            ];
+            $statusLabels = [
+                'pending'  => 'Waiting Review',
+                'approved' => 'Disetujui',
+                'active'   => 'Aktif',
+                'rejected' => 'Ditolak',
+                'paid'     => 'Lunas',
+            ];
+        @endphp
+        <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden transition-all duration-300"
+             :class="expanded === {{ $p->id }} ? 'shadow-lg ring-1 ring-slate-200' : 'hover:shadow-md'">
+            <button type="button"
+                @click="expanded = expanded === {{ $p->id }} ? null : {{ $p->id }}"
+                class="w-full flex items-center justify-between p-6 text-left">
+                <div class="flex items-center gap-4 min-w-0">
+                    <div class="w-12 h-12 bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl flex items-center justify-center font-black text-slate-600 shrink-0">
+                        {{ strtoupper(substr($p->user->name ?? '?', 0, 2)) }}
+                    </div>
+                    <div class="min-w-0">
+                        <p class="font-black text-slate-800 truncate">{{ $p->user->name ?? 'Unknown' }}</p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tight mt-0.5">{{ $p->loan_number }}</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-5 shrink-0">
+                    <div class="text-right">
+                        <p class="text-base font-black text-slate-800 tabular-nums">Rp {{ number_format($p->amount) }}</p>
+                        <span class="inline-flex items-center gap-1.5 text-[9px] font-black rounded-lg uppercase tracking-wide px-2 py-0.5 {{ $statusColors[$p->status] ?? 'bg-slate-50 text-slate-600 border-slate-200' }}">
+                            <span class="w-1.5 h-1.5 rounded-full {{ $p->status === 'pending' ? 'bg-amber-500 animate-ping' : ($p->status === 'active' ? 'bg-emerald-500' : 'bg-slate-400') }}"></span>
+                            {{ $statusLabels[$p->status] ?? ucfirst($p->status) }}
+                        </span>
+                    </div>
+                    <svg class="w-5 h-5 text-slate-300 transition-transform duration-300 shrink-0"
+                         :class="expanded === {{ $p->id }} ? 'rotate-180' : ''"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </div>
+            </button>
+
+            <div x-show="expanded === {{ $p->id }}" x-cloak
+                 x-transition:enter="transition-all duration-300 ease-out"
+                 x-transition:enter-start="opacity-0 max-h-0 overflow-hidden"
+                 x-transition:enter-end="opacity-100 max-h-96"
+                 class="border-t border-slate-50">
+                <div class="p-6 bg-slate-50/30 space-y-5">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div>
+                            <p class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Nominal Pinjaman</p>
+                            <p class="text-sm font-black text-slate-800">Rp {{ number_format($p->amount) }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Tenor</p>
+                            <p class="text-sm font-black text-slate-700">{{ $p->tenure_months }} Bulan</p>
+                        </div>
+                        <div>
+                            <p class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Bunga</p>
+                            <p class="text-sm font-black text-slate-700">{{ $p->interest_rate }}%</p>
+                        </div>
+                        <div>
+                            <p class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Tanggal Pengajuan</p>
+                            <p class="text-sm font-black text-slate-700">{{ $p->created_at->format('d M Y') }}</p>
+                        </div>
+                        <div class="md:col-span-4">
+                            <p class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Tujuan</p>
+                            <p class="text-sm font-black text-slate-700">{{ $p->purpose ?? '-' }}</p>
+                        </div>
+                    </div>
+
+                    @if($p->status === 'pending')
+                    <div class="flex gap-3 pt-2 border-t border-slate-100">
+                        <form action="{{ route('pengurus.kelpinjaman.approve', $p) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="px-6 py-3 bg-emerald-600 text-white text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200 active:scale-95">
+                                Setujui
+                            </button>
+                        </form>
+                        <form action="{{ route('pengurus.kelpinjaman.reject', $p) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="px-6 py-3 bg-rose-500 text-white text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-rose-600 transition-all shadow-lg shadow-rose-200 active:scale-95">
+                                Tolak
+                            </button>
+                        </form>
+                    </div>
+                    @elseif($p->status === 'approved')
+                    <div class="flex gap-3 pt-2 border-t border-slate-100">
+                        <form action="{{ route('pengurus.kelpinjaman.cairkan', $p) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="px-8 py-3 bg-blue-600 text-white text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 active:scale-95">
+                                Cairkan Dana
+                            </button>
+                        </form>
+                    </div>
+                    @endif
+                </div>
+            </div>
         </div>
+        @empty
+        <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 p-16 text-center">
+            <div class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            </div>
+            <p class="font-bold text-slate-400 italic">Tidak ada data pinjaman.</p>
+        </div>
+        @endforelse
     </div>
 </div>
 
 {{-- ================= MODAL INPUT MANUAL ================= --}}
-<div id="modalInputPinjaman" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md transition-opacity duration-300 opacity-0 pointer-events-none">
+<div id="modalInputPinjaman" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md transition-all duration-300 hidden">
     <div class="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl border border-white/20 overflow-hidden transform transition-all duration-500 scale-95 translate-y-8">
         {{-- Header Modal --}}
         <div class="px-10 py-8 border-b border-slate-50 flex items-center justify-between bg-gradient-to-r from-white to-blue-50/30">
@@ -294,19 +327,19 @@
     function openModal() {
         const modal = document.getElementById('modalInputPinjaman');
         const content = modal.querySelector('div');
-        modal.classList.remove('opacity-0', 'pointer-events-none');
-        modal.classList.add('opacity-100');
-        content.classList.remove('scale-95', 'translate-y-8');
-        content.classList.add('scale-100', 'translate-y-0');
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            content.classList.remove('scale-95', 'translate-y-8');
+            content.classList.add('scale-100', 'translate-y-0');
+        });
     }
 
     function closeModal() {
         const modal = document.getElementById('modalInputPinjaman');
         const content = modal.querySelector('div');
-        modal.classList.remove('opacity-100');
-        modal.classList.add('opacity-0', 'pointer-events-none');
         content.classList.remove('scale-100', 'translate-y-0');
         content.classList.add('scale-95', 'translate-y-8');
+        setTimeout(() => modal.classList.add('hidden'), 300);
     }
 
     // Menutup elemen jika klik di luar (Optional UX)

@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-<div class="px-8 py-8 bg-[#f8fafc] min-h-screen space-y-8 animate-fade-in" x-data="{ filter: 'semua' }">
+<div class="px-8 py-8 space-y-8 animate-fade-in" x-data="{ filter: 'semua' }">
     <div class="flex justify-between items-center">
         <div>
             <h1 class="text-3xl font-black text-slate-800 tracking-tight">Rekapitulasi Angsuran</h1>

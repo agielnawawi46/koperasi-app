@@ -10,7 +10,7 @@
     $authUser = auth()->user();
 @endphp
 
-<div class="px-8 py-8 bg-[#f8fafc] min-h-screen space-y-8 animate-fade-in" x-data="{ tab: 'profil', openEdit: false }">
+<div class="px-8 py-8 space-y-8 animate-fade-in" x-data="{ tab: 'profil', openEdit: false }">
 
     @if (session('success'))
         <div class="bg-emerald-50 border border-emerald-200 rounded-2xl px-6 py-4 text-emerald-700 text-sm font-bold shadow-sm flex items-center gap-3">
@@ -87,7 +87,7 @@
                     </div>
 
                     <div class="pt-6">
-                        <button @click="openEdit = true" class="group flex items-center gap-2 px-5 py-3.5 bg-blue-600 text-white font-bold rounded-2xl shadow-xl shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95">
+                        <button onclick="openEditModal()" class="group flex items-center gap-2 px-5 py-3.5 bg-blue-600 text-white font-bold rounded-2xl shadow-xl shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                             Edit Profil Akun
                         </button>
@@ -119,19 +119,10 @@
         </div>
     </div>
 
+@push('modals')
     {{-- ================= MODAL EDIT PROFIL ================= --}}
-    <div x-show="openEdit" 
-         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-cloak>
-
-        <div @click.outside="openEdit = false"
-             class="bg-white w-full max-w-xl rounded-[2.5rem] shadow-2xl overflow-hidden"
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0 scale-95 translate-y-8"
-             x-transition:enter-end="opacity-100 scale-100 translate-y-0">
+    <div id="modalEditProfil" class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all duration-300 hidden">
+        <div class="bg-white w-full max-w-xl rounded-[2.5rem] shadow-2xl overflow-hidden transform transition-all duration-300 scale-95 translate-y-8">
 
             <div class="px-10 py-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
                 <div class="flex items-center gap-4">
@@ -140,7 +131,7 @@
                     </div>
                     <h2 class="font-extrabold text-2xl text-slate-800">Edit Profil</h2>
                 </div>
-                <button @click="openEdit = false" class="text-slate-300 hover:text-rose-500 transition-colors">
+                <button onclick="closeEditModal()" class="text-slate-300 hover:text-rose-500 transition-colors">
                     <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
@@ -165,14 +156,40 @@
                     </div>
 
                     <div class="flex items-center gap-3 pt-4">
-                        <button type="button" @click="openEdit = false" class="flex-1 py-4 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors bg-slate-50 rounded-2xl">Batal</button>
+                        <button type="button" onclick="closeEditModal()" class="flex-1 py-4 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors bg-slate-50 rounded-2xl">Batal</button>
                         <button type="submit" class="flex-[2] py-4 bg-blue-600 text-white font-black rounded-2xl shadow-xl shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95">Simpan Perubahan</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+@endpush
 </div>
+
+<script>
+function openEditModal() {
+    const modal = document.getElementById('modalEditProfil');
+    const content = modal.querySelector('div');
+    modal.classList.remove('hidden');
+    requestAnimationFrame(() => {
+        content.classList.remove('scale-95', 'translate-y-8');
+        content.classList.add('scale-100', 'translate-y-0');
+    });
+}
+function closeEditModal() {
+    const modal = document.getElementById('modalEditProfil');
+    const content = modal.querySelector('div');
+    content.classList.remove('scale-100', 'translate-y-0');
+    content.classList.add('scale-95', 'translate-y-8');
+    setTimeout(() => modal.classList.add('hidden'), 300);
+}
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('modalEditProfil');
+    if (!modal.classList.contains('hidden') && event.target === modal) {
+        closeEditModal();
+    }
+});
+</script>
 
 <style>
     [x-cloak] { display: none !important; }

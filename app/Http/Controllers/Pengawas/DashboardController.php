@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Pengawas;
 use App\Http\Controllers\Controller;
 use App\Models\Installment;
 use App\Models\Loan;
+use App\Models\Saving;
 use App\Models\SavingsTransaction;
 use Illuminate\View\View;
 
@@ -18,7 +19,7 @@ class DashboardController extends Controller
 
         $sistemStatus = 'Normal';
 
-        $totalSimpanan = \App\Models\Saving::sum('balance');
+        $totalSimpanan = Saving::sum('balance');
         $totalPinjaman = Loan::whereIn('status', ['active', 'approved'])->sum('amount');
 
         return view('pengawas.dashboard.index', compact(

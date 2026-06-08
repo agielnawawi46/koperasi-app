@@ -28,7 +28,7 @@ class AuditPinjamanController extends Controller
                     'no_berkas' => $loan->loan_number,
                     'tujuan' => $loan->purpose ?? '-',
                     'nominal' => $loan->amount,
-                    'status_audit' => match($loan->status) {
+                    'status_audit' => match ($loan->status) {
                         'pending' => 'Menunggu',
                         'approved' => 'Disetujui',
                         'active' => 'Aktif',

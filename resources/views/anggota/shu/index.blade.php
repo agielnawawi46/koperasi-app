@@ -6,7 +6,7 @@
 
 @section('content')
 {{-- Tambahkan x-data untuk kontrol popup --}}
-<div class="px-8 py-8 bg-[#f8fafc] min-h-screen space-y-8 animate-fade-in" x-data="{ openModal: false }">
+<div class="px-8 py-8 space-y-8 animate-fade-in" x-data="{ metode: 'Simpanan Sukarela' }">
 
     {{-- ================= Header Section ================= --}}
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -47,14 +47,13 @@
 
                 <div class="flex items-center gap-4">
                     @if($statusSHU === 'Siap Diambil')
-                    <button @click="openModal = true" class="group flex items-center gap-2 px-5 py-3.5 bg-indigo-600 text-white font-bold rounded-2xl shadow-xl shadow-indigo-200 hover:bg-indigo-700 transition-all active:scale-95">
-                        Ambil / Tarik SHU
+                    <button onclick="openSHUModal()" class="group flex items-center gap-2 px-5 py-3.5 bg-indigo-600 text-white font-bold rounded-2xl shadow-xl shadow-indigo-200 hover:bg-indigo-700 transition-all active:scale-95">
+                        Tarik Saldo
                     </button>
-                    @elseif($statusSHU === 'Sudah Diambil')
-                    <div class="flex items-center gap-2 px-5 py-3.5 bg-emerald-50 text-emerald-700 font-bold rounded-2xl border border-emerald-100">
-                        <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
-                        Sudah Diambil
-                    </div>
+                    @else
+                    <button @click="alert('SHU belum tersedia untuk tahun ini.')" class="group flex items-center gap-2 px-5 py-3.5 bg-slate-300 text-white font-bold rounded-2xl cursor-not-allowed">
+                        Tarik Saldo
+                    </button>
                     @endif
                     <div class="inline-flex items-center gap-1.5 px-4 py-1.5 {{ $statusSHU === 'Siap Diambil' ? 'bg-indigo-50 text-indigo-700 border-indigo-100' : ($statusSHU === 'Sudah Diambil' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-slate-50 text-slate-700 border-slate-100') }} text-[10px] font-black rounded-xl border uppercase tracking-wide">
                         <span class="w-1.5 h-1.5 {{ $statusSHU === 'Siap Diambil' ? 'bg-indigo-500 animate-pulse' : ($statusSHU === 'Sudah Diambil' ? 'bg-emerald-500' : 'bg-slate-400') }} rounded-full"></span>
@@ -113,89 +112,104 @@
     </div>
 </div>
 
-        {{-- ================= Riwayat SHU Pertahun ================= --}}
-    <div class="bg-white rounded-[3rem] shadow-sm border border-slate-100 overflow-hidden animate-slide-up">
-        <div class="p-8 border-b border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-gradient-to-r from-white to-slate-50/30">
-            <div class="flex items-center gap-5">
-                <div class="w-14 h-14 bg-slate-900 rounded-[1.3rem] flex items-center justify-center text-white shadow-xl shadow-slate-200 rotate-3 group hover:rotate-0 transition-transform duration-300">
-                    <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        {{-- ================= Riwayat SHU Per Tahun ================= --}}
+    <div x-data="{ expanded: null }" class="space-y-4 animate-slide-up">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-2xl font-black text-slate-800">Riwayat SHU Per Tahun</h2>
+                <p class="text-sm text-slate-400 font-medium">{{ count($riwayatSHU) }} tahun tercatat</p>
+            </div>
+        </div>
+
+        @forelse($riwayatSHU as $r)
+        @php
+            $statusColor = match($r['status']) {
+                'Sudah Diambil' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                'Dibagikan'     => 'bg-amber-50 text-amber-700 border-amber-200',
+                default         => 'bg-slate-50 text-slate-600 border-slate-200',
+            };
+            $statusLabel = match($r['status']) {
+                'Sudah Diambil' => 'Sudah Diambil',
+                'Dibagikan'     => 'Belum Diambil',
+                default         => 'Menunggu',
+            };
+            $dotColor = match($r['status']) {
+                'Sudah Diambil' => 'bg-emerald-500',
+                'Dibagikan'     => 'bg-amber-500',
+                default         => 'bg-slate-400',
+            };
+        @endphp
+        <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden transition-all duration-300"
+             :class="expanded === {{ $loop->index }} ? 'shadow-lg ring-1 ring-slate-200' : 'hover:shadow-md'">
+            <button type="button"
+                @click="expanded = expanded === {{ $loop->index }} ? null : {{ $loop->index }}"
+                class="w-full flex items-center justify-between p-6 text-left">
+                <div class="flex items-center gap-4 min-w-0">
+                    <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white font-black text-sm shrink-0">{{ $r['tahun'] }}</div>
+                    <div class="min-w-0">
+                        <p class="font-black text-slate-800">SHU {{ $r['tahun'] }}</p>
+                        <p class="text-[10px] font-bold text-slate-400 mt-0.5 tabular-nums">Rp {{ number_format($r['total_diterima']) }}</p>
+                    </div>
                 </div>
-                <div>
-                    <h2 class="text-xl font-black text-slate-800 tracking-tight">Riwayat SHU Per Tahun</h2>
-                    <p class="text-sm text-slate-400 font-medium italic">Perbandingan perolehan SHU Anda 3 tahun terakhir</p>
+                <div class="flex items-center gap-4 shrink-0">
+                    <span class="inline-flex items-center gap-1.5 text-[9px] font-black rounded-lg uppercase tracking-wide px-2 py-0.5 border {{ $statusColor }}">
+                        <span class="w-1.5 h-1.5 rounded-full {{ $dotColor }}"></span>
+                        {{ $statusLabel }}
+                    </span>
+                    <svg class="w-5 h-5 text-slate-300 transition-transform duration-300 shrink-0"
+                         :class="expanded === {{ $loop->index }} ? 'rotate-180' : ''"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </div>
+            </button>
+
+            <div x-show="expanded === {{ $loop->index }}" x-cloak
+                 x-transition:enter="transition-all duration-300 ease-out"
+                 x-transition:enter-start="opacity-0 max-h-0 overflow-hidden"
+                 x-transition:enter-end="opacity-100 max-h-96"
+                 class="border-t border-slate-50">
+                <div class="p-6 bg-slate-50/30 space-y-4">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div>
+                            <p class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Jasa Modal</p>
+                            <p class="text-sm font-black text-slate-800 tabular-nums">Rp {{ number_format($r['jasa_modal']) }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Jasa Anggota</p>
+                            <p class="text-sm font-black text-slate-800 tabular-nums">Rp {{ number_format($r['jasa_anggota']) }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Metode</p>
+                            <p class="text-sm font-black text-slate-700">{{ $r['metode_penyaluran'] }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Status</p>
+                            <span class="inline-flex items-center gap-1.5 text-[10px] font-black border rounded-lg px-2 py-1 {{ $statusColor }}">{{ $r['status'] }}</span>
+                        </div>
+                    </div>
+                    <div class="pt-3 border-t border-slate-100 flex justify-between items-center">
+                        <span class="text-[9px] font-black uppercase tracking-widest text-slate-400">Total Diterima</span>
+                        <span class="text-base font-black text-indigo-600 tabular-nums">Rp {{ number_format($r['total_diterima']) }}</span>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead>
-                    <tr class="bg-slate-50/50">
-                        <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Tahun Buku</th>
-                        <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Jasa Modal</th>
-                        <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Jasa Anggota</th>
-                        <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Total Diterima</th>
-                        <th class="px-8 py-5 text-center text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Metode</th>
-                        <th class="px-8 py-5 text-center text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Status</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-50">
-                    @forelse($riwayatSHU as $r)
-                    <tr class="group hover:bg-blue-50/30 transition-all duration-300">
-                        <td class="px-8 py-7 text-sm font-black text-slate-800">{{ $r['tahun'] }}</td>
-                        <td class="px-8 py-7 text-sm text-slate-600 font-medium tabular-nums">Rp {{ number_format($r['jasa_modal']) }}</td>
-                        <td class="px-8 py-7 text-sm text-slate-600 font-medium tabular-nums">Rp {{ number_format($r['jasa_anggota']) }}</td>
-                        <td class="px-8 py-7 text-sm font-black tabular-nums {{ $r['status'] === 'Dibagikan' ? 'text-indigo-600' : 'text-slate-800' }}">Rp {{ number_format($r['total_diterima']) }}</td>
-                        <td class="px-8 py-7 text-center">
-                            <span class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-slate-50 text-slate-600 text-[10px] font-black rounded-xl border border-slate-100 uppercase tracking-wide">{{ $r['metode_penyaluran'] }}</span>
-                        </td>
-                        <td class="px-8 py-7 text-center">
-                            @if($r['status'] === 'Dibagikan')
-                            <span class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-amber-50 text-amber-700 text-[10px] font-black rounded-xl border border-amber-100 uppercase tracking-wide">
-                                <span class="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>
-                                Belum Diambil
-                            </span>
-                            @elseif($r['status'] === 'Sudah Diambil')
-                            <span class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-emerald-50 text-emerald-700 text-[10px] font-black rounded-xl border border-emerald-100 uppercase tracking-wide">
-                                <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
-                                Sudah Diambil
-                            </span>
-                            @else
-                            <span class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-slate-50 text-slate-600 text-[10px] font-black rounded-xl border border-slate-100 uppercase tracking-wide">
-                                <span class="w-1.5 h-1.5 bg-slate-400 rounded-full"></span>
-                                Menunggu
-                            </span>
-                            @endif
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="6" class="px-8 py-12 text-center font-bold text-slate-400 italic">Belum ada riwayat SHU.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+        @empty
+        <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 p-16 text-center">
+            <p class="font-bold text-slate-400 italic">Belum ada riwayat SHU.</p>
         </div>
+        @endforelse
     </div>
 
     {{-- ================= Popup Modal Ambil SHU ================= --}}
-    <div x-show="openModal" 
-         class="fixed inset-0 z-[99] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0"
-         x-cloak>
-        
-        <div class="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl p-10 border border-slate-100 relative overflow-hidden"
-             @click.away="openModal = false">
+    <div id="modalSHU" class="fixed inset-0 z-[99] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all duration-300 hidden">
+        <div class="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl p-10 border border-slate-100 relative overflow-hidden transform transition-all duration-300 scale-95 translate-y-8">
             
             <div class="relative z-10">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight">Opsi Penarikan</h3>
-                    <button @click="openModal = false" class="text-slate-400 hover:text-slate-600">
+                    <button onclick="closeSHUModal()" class="text-slate-400 hover:text-slate-600">
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                 </div>
@@ -209,17 +223,37 @@
                     @csrf
                     <div>
                         <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block">Pilih Metode Penyaluran</label>
-                        <select name="distribution_method" class="w-full bg-slate-50 border-none rounded-2xl px-4 py-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500">
+                        <select name="distribution_method" x-model="metode" class="w-full bg-slate-50 border-none rounded-2xl px-4 py-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500">
                             <option value="Simpanan Sukarela">Pindahkan ke Simpanan Sukarela</option>
                             <option value="Transfer Bank">Cairkan via Transfer Bank</option>
                             <option value="Tunai">Ambil Tunai di Kantor</option>
                         </select>
                     </div>
 
-                    <div class="bg-slate-50 p-4 rounded-2xl">
-                        <p class="text-[10px] text-slate-500 font-medium leading-relaxed italic">
-                            *Jika memilih Simpanan Sukarela, dana akan langsung menambah saldo aset Anda dan mulai menghasilkan bunga efektif di bulan berikutnya.
+                    <div x-show="metode === 'Simpanan Sukarela'" class="bg-emerald-50 border border-emerald-100 p-4 rounded-2xl">
+                        <p class="text-[10px] text-emerald-700 font-medium leading-relaxed">
+                            Dana akan langsung masuk ke Simpanan Sukarela Anda tanpa perlu verifikasi pengurus dan mulai menghasilkan bunga efektif di bulan berikutnya.
                         </p>
+                    </div>
+
+                    <div x-show="metode === 'Transfer Bank'" class="bg-indigo-50 border border-indigo-100 p-4 rounded-2xl space-y-2">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-2">Rekening Koperasi</p>
+                        <p class="text-sm font-bold text-slate-700">{{ $bankName ?? 'Belum diatur' }}</p>
+                        <p class="text-sm font-bold text-slate-700">{{ $bankAccountNumber ?? '-' }}</p>
+                        <p class="text-sm font-bold text-slate-700">a.n. {{ $bankAccountName ?? '-' }}</p>
+                        <div class="mt-2 pt-2 border-t border-indigo-200">
+                            <p class="text-[10px] text-indigo-500 font-medium italic">
+                                *Setelah transfer, konfirmasikan bukti transfer ke pengurus.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div x-show="metode === 'Tunai'">
+                        <div class="bg-amber-50 border border-amber-100 p-4 rounded-2xl">
+                            <p class="text-[10px] text-amber-700 font-medium leading-relaxed">
+                                Silakan datang langsung ke kantor koperasi dengan membawa kartu anggota untuk mengambil SHU secara tunai.
+                            </p>
+                        </div>
                     </div>
 
                     <button type="submit" class="w-full bg-slate-900 text-white py-4 rounded-2xl text-xs font-black uppercase tracking-[0.2em] hover:bg-indigo-600 transition-all shadow-xl shadow-slate-200">
@@ -231,6 +265,31 @@
     </div>
 
 </div>
+
+<script>
+function openSHUModal() {
+    const modal = document.getElementById('modalSHU');
+    const content = modal.querySelector('div');
+    modal.classList.remove('hidden');
+    requestAnimationFrame(() => {
+        content.classList.remove('scale-95', 'translate-y-8');
+        content.classList.add('scale-100', 'translate-y-0');
+    });
+}
+function closeSHUModal() {
+    const modal = document.getElementById('modalSHU');
+    const content = modal.querySelector('div');
+    content.classList.remove('scale-100', 'translate-y-0');
+    content.classList.add('scale-95', 'translate-y-8');
+    setTimeout(() => modal.classList.add('hidden'), 300);
+}
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('modalSHU');
+    if (!modal.classList.contains('hidden') && event.target === modal) {
+        closeSHUModal();
+    }
+});
+</script>
 
 <style>
     @keyframes fade-in { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }

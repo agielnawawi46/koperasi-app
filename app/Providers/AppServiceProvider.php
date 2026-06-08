@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Permission\Models\Permission;
@@ -22,9 +23,12 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $requiredRoles = ['super_admin', 'admin', 'anggota', 'pengurus', 'pengawas'];
-        $existingCount = Role::where('guard_name', 'web')->whereIn('name', $requiredRoles)->count();
 
-        if ($existingCount === count($requiredRoles)) {
+        $seeded = Cache::remember('roles_seeded', 86400, function () use ($requiredRoles) {
+            return Role::where('guard_name', 'web')->whereIn('name', $requiredRoles)->count() === count($requiredRoles);
+        });
+
+        if ($seeded) {
             return;
         }
 

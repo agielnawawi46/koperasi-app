@@ -6,7 +6,7 @@
 
 @section('content')
 
-<div x-data="userManager()" class="px-8 py-8 bg-[#f8fafc] min-h-screen space-y-8 animate-fade-in">
+<div x-data="userManager()" class="px-8 py-8 space-y-8 animate-fade-in">
 
     @if (session('success'))
         <div class="bg-emerald-50 border border-emerald-200 rounded-2xl px-6 py-4 text-emerald-700 text-sm font-black shadow-sm flex items-center gap-3">
@@ -35,7 +35,7 @@
     </div>
 
     {{-- ================= ROLE CARDS ================= --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <template x-for="r in roles" :key="r.name">
             <div 
                 @click="openRole(r)"
@@ -45,7 +45,7 @@
                 
                 <div class="mb-5 p-5 bg-slate-50 rounded-[1.5rem] group-hover:bg-blue-600 group-hover:text-white group-hover:shadow-xl group-hover:shadow-blue-200 transition-all duration-500 text-blue-600" x-html="r.icon"></div>
                 
-                <h3 class="font-black text-xl text-slate-800" x-text="r.name"></h3>
+                <h3 class="font-black text-xl text-slate-800" x-text="r.label"></h3>
                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mt-2" x-text="r.desc"></p>
                 
                 <div class="mt-8 flex items-center gap-2 text-xs font-black uppercase tracking-widest text-blue-600 opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
@@ -57,19 +57,8 @@
     </div>
 
     {{-- ================= MODAL DATA USER (LIST) ================= --}}
-    <div x-show="open" 
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         class="fixed inset-0 flex items-center justify-center bg-slate-900/60 backdrop-blur-md z-50 p-4"
-         x-cloak>
-
-        <div @click.outside="closeModal"
-             x-show="open"
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0 scale-95 translate-y-8"
-             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-             class="bg-white w-full max-w-4xl h-[85vh] rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden border border-white/20">
+    <div id="modalUserList" class="fixed inset-0 flex items-center justify-center bg-slate-900/60 backdrop-blur-md z-[110] p-4 transition-all duration-300 hidden">
+        <div class="bg-white w-full max-w-4xl h-[85vh] rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden border border-white/20 transform transition-all duration-300 scale-95 translate-y-8">
 
             {{-- Modal Header --}}
             <div class="px-10 py-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
@@ -78,11 +67,11 @@
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                     </div>
                     <div>
-                        <h2 class="font-extrabold text-2xl text-slate-800">Entitas <span class="text-blue-600" x-text="currentRole"></span></h2>
+                        <h2 class="font-extrabold text-2xl text-slate-800">Entitas <span class="text-blue-600" x-text="currentLabel"></span></h2>
                         <p class="text-xs font-bold text-slate-400 tracking-widest uppercase mt-0.5">Daftar Otoritas Terdaftar</p>
                     </div>
                 </div>
-                <button @click="closeModal" class="p-2 hover:bg-rose-50 rounded-full text-slate-300 hover:text-rose-500 transition-all">
+                <button onclick="closeUserListModal()" class="p-2 hover:bg-rose-50 rounded-full text-slate-300 hover:text-rose-500 transition-all">
                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
@@ -140,19 +129,8 @@
     </div>
 
     {{-- ================= MODAL FORM (INPUT/EDIT) ================= --}}
-    <div x-show="formOpen" 
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         class="fixed inset-0 flex items-center justify-center bg-slate-900/80 backdrop-blur-xl z-[60] p-4" 
-         x-cloak>
-         
-        <div @click.outside="formOpen=false" 
-             x-show="formOpen"
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0 scale-90"
-             x-transition:enter-end="opacity-100 scale-100"
-             class="bg-white w-full max-w-md rounded-[2.5rem] p-10 shadow-2xl border border-white/20">
+    <div id="modalUserForm" class="fixed inset-0 flex items-center justify-center bg-slate-900/80 backdrop-blur-xl z-[110] p-4 transition-all duration-300 hidden">
+        <div class="bg-white w-full max-w-md rounded-[2.5rem] p-10 shadow-2xl border border-white/20 transform transition-all duration-300 scale-90">
             
             <div class="mb-10 text-center">
                 <div class="w-20 h-20 bg-blue-50 text-blue-600 rounded-[2.5rem] flex items-center justify-center mx-auto mb-5 shadow-lg shadow-blue-100/50">
@@ -178,7 +156,7 @@
             </div>
 
             <div class="flex items-center gap-3 mt-12">
-                <button @click="formOpen=false" class="flex-1 py-4 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors bg-slate-50 rounded-2xl">
+                <button onclick="closeFormModal()" class="flex-1 py-4 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors bg-slate-50 rounded-2xl">
                     Batal
                 </button>
                 <button @click="saveUser" class="flex-[2] py-4 bg-blue-600 text-white text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-blue-700 shadow-xl shadow-blue-200 transition-all active:scale-95">
@@ -187,7 +165,6 @@
             </div>
         </div>
     </div>
-
 </div>
 
 {{-- ================= CSS & JS ================= --}}
@@ -207,27 +184,26 @@ function userManager() {
         open: false,
         formOpen: false,
         currentRole: '',
+        currentLabel: '',
         formMode: 'Tambah User',
         editIndex: null,
 
         roles: [
             { 
-                name: 'Admin', 
-                desc: 'Otoritas Sistem Utama', 
-                icon: `<svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>` 
-            },
-            { 
-                name: 'Pengawas', 
+                name: 'pengawas', 
+                label: 'Pengawas',
                 desc: 'Audit & Monitoring', 
                 icon: `<svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>` 
             },
             { 
-                name: 'Pengurus', 
+                name: 'pengurus', 
+                label: 'Pengurus',
                 desc: 'Operasional Harian', 
                 icon: `<svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>` 
             },
             { 
-                name: 'Anggota', 
+                name: 'anggota', 
+                label: 'Anggota',
                 desc: 'Nasabah Koperasi', 
                 icon: `<svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>` 
             }
@@ -239,11 +215,12 @@ function userManager() {
 
         openRole(role) {
             this.currentRole = role.name
-            this.open = true
+            this.currentLabel = role.label
+            openUserListModal()
         },
 
         closeModal() {
-            this.open = false
+            closeUserListModal()
         },
 
         get filteredUsers() {
@@ -251,13 +228,13 @@ function userManager() {
         },
 
         openForm() {
-            this.formOpen = true
             this.formMode = 'Tambah User'
             this.form = { name: '', email: '', password: '' }
             this.editIndex = null
+            openFormModal()
         },
 
-        saveUser() {
+        async saveUser() {
             const formData = new FormData();
             formData.append('name', this.form.name);
             formData.append('email', this.form.email);
@@ -268,43 +245,90 @@ function userManager() {
             if (this.editIndex !== null) {
                 formData.append('_method', 'PUT');
                 const userId = this.filteredUsers[this.editIndex].id;
-                fetch('/admin/pengguna/' + userId, { method: 'POST', body: formData })
-                    .then(() => location.reload());
+                await fetch('/admin/pengguna/' + userId, { method: 'POST', body: formData });
             } else {
-                fetch('/admin/pengguna', { method: 'POST', body: formData })
-                    .then(() => location.reload());
+                await fetch('/admin/pengguna', { method: 'POST', body: formData });
             }
-            this.formOpen = false
+
+            const res = await fetch('/admin/pengguna/data');
+            const data = await res.json();
+            this.users = data.users;
+            closeFormModal();
         },
 
         editUser(user, index) {
-            this.formOpen = true
             this.formMode = 'Edit User'
             this.form = { ...user }
             this.editIndex = index
+            openFormModal()
         },
 
-        toggleStatus(index) {
+        async toggleStatus(index) {
             const userId = this.filteredUsers[index].id;
             const formData = new FormData();
             formData.append('_method', 'PATCH');
             formData.append('_token', '{{ csrf_token() }}');
-            fetch('/admin/pengguna/' + userId + '/status', { method: 'POST', body: formData })
-                .then(() => location.reload());
+            await fetch('/admin/pengguna/' + userId + '/status', { method: 'POST', body: formData });
+
+            const res = await fetch('/admin/pengguna/data');
+            const data = await res.json();
+            this.users = data.users;
         },
 
-        deleteUser(index) {
+        async deleteUser(index) {
             if(confirm('Hapus user ini secara permanen?')) {
                 const userId = this.filteredUsers[index].id;
                 const formData = new FormData();
                 formData.append('_method', 'DELETE');
                 formData.append('_token', '{{ csrf_token() }}');
-                fetch('/admin/pengguna/' + userId, { method: 'POST', body: formData })
-                    .then(() => location.reload());
+                await fetch('/admin/pengguna/' + userId, { method: 'POST', body: formData });
+
+                const res = await fetch('/admin/pengguna/data');
+                const data = await res.json();
+                this.users = data.users;
             }
         }
     }
 }
+
+function openUserListModal() {
+    const modal = document.getElementById('modalUserList');
+    const content = modal.querySelector('div');
+    modal.classList.remove('hidden');
+    requestAnimationFrame(() => {
+        content.classList.remove('scale-95', 'translate-y-8');
+        content.classList.add('scale-100', 'translate-y-0');
+    });
+}
+function closeUserListModal() {
+    const modal = document.getElementById('modalUserList');
+    const content = modal.querySelector('div');
+    content.classList.remove('scale-100', 'translate-y-0');
+    content.classList.add('scale-95', 'translate-y-8');
+    setTimeout(() => modal.classList.add('hidden'), 300);
+}
+function openFormModal() {
+    const modal = document.getElementById('modalUserForm');
+    const content = modal.querySelector('div');
+    modal.classList.remove('hidden');
+    requestAnimationFrame(() => {
+        content.classList.remove('scale-90');
+        content.classList.add('scale-100');
+    });
+}
+function closeFormModal() {
+    const modal = document.getElementById('modalUserForm');
+    const content = modal.querySelector('div');
+    content.classList.remove('scale-100');
+    content.classList.add('scale-90');
+    setTimeout(() => modal.classList.add('hidden'), 300);
+}
+document.addEventListener('click', function(event) {
+    const ml = document.getElementById('modalUserList');
+    if (!ml.classList.contains('hidden') && event.target === ml) closeUserListModal();
+    const mf = document.getElementById('modalUserForm');
+    if (!mf.classList.contains('hidden') && event.target === mf) closeFormModal();
+});
 </script>
 
 @endsection

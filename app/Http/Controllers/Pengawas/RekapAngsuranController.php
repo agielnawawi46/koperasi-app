@@ -23,10 +23,11 @@ class RekapAngsuranController extends Controller
             ->flatMap(function ($loan) {
                 return $loan->installments->map(function ($inst) use ($loan) {
                     $isOverdue = $inst->status === 'pending' && $inst->due_date < now();
+
                     return [
                         'nama_anggota' => $loan->user->name,
                         'no_pinjaman' => $loan->loan_number,
-                        'angsuran_ke' => $inst->installment_number . '/' . $loan->tenure_months,
+                        'angsuran_ke' => $inst->installment_number.'/'.$loan->tenure_months,
                         'total_angsuran' => $inst->amount,
                         'sisa_outstanding' => $loan->installments->where('status', 'pending')->sum('amount'),
                         'status_label' => $isOverdue ? 'menunggak' : ($inst->status === 'paid' ? 'lancar' : 'pending'),

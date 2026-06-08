@@ -7,7 +7,7 @@
 @section('content')
 
 {{-- Inisialisasi State Dashboard Menggunakan Alpine.js --}}
-<div x-data="{ activeTab: 'simpanan' }" class="px-8 py-8 bg-[#f8fafc] min-h-screen space-y-8 animate-fade-in">
+<div x-data="{ activeTab: 'simpanan' }" class="px-8 py-8 space-y-8 animate-fade-in">
 
     {{-- ================= HEADER SECTION ================= --}}
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -39,8 +39,8 @@
                     </div>
                 </div>
                 <div>
-                    <h2 class="text-3xl font-black text-slate-800 tabular-nums">{{ $totalAnggota ?? 325 }} <span class="text-sm text-slate-400 font-bold uppercase tracking-widest">User</span></h2>
-                    <div class="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-[10px] font-black bg-emerald-100/50 text-emerald-700 border border-emerald-200 uppercase tracking-widest">+12 Anggota Bulan Ini</div>
+                    <h2 class="text-3xl font-black text-slate-800 tabular-nums">{{ $totalAnggota }} <span class="text-sm text-slate-400 font-bold uppercase tracking-widest">User</span></h2>
+                    <div class="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-[10px] font-black bg-emerald-100/50 text-emerald-700 border border-emerald-200 uppercase tracking-widest">{{ $newAnggotaThisMonth ?? 0 }} Anggota Baru Bulan Ini</div>
                 </div>
             </div>
         </div>
@@ -58,8 +58,8 @@
                     </div>
                 </div>
                 <div>
-                    <h2 class="text-3xl font-black text-slate-800 tabular-nums">Rp {{ number_format($totalPinjamanDenganBunga ?? 425000000, 0, ',', '.') }}</h2>
-                    <div class="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-[10px] font-black bg-amber-100/50 text-amber-700 border border-amber-200 uppercase tracking-widest">Bunga: {{ $persentaseBunga ?? 'Flat 10%' }} • {{ $pinjamanAktif ?? 84 }} Berkas</div>
+                    <h2 class="text-3xl font-black text-slate-800 tabular-nums">Rp {{ number_format($totalPinjamanDenganBunga, 0, ',', '.') }}</h2>
+                    <div class="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-[10px] font-black bg-amber-100/50 text-amber-700 border border-amber-200 uppercase tracking-widest">Bunga: {{ $persentaseBunga }}% • {{ $pinjamanAktif }} Berkas</div>
                 </div>
             </div>
         </div>
@@ -77,8 +77,8 @@
                     </div>
                 </div>
                 <div>
-                    <h2 class="text-3xl font-black text-blue-600 tabular-nums">2.3 <span class="text-sm text-slate-400 font-bold uppercase tracking-widest">Miliar</span></h2>
-                    <div class="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-[10px] font-black bg-blue-100/50 text-blue-700 border border-blue-200 uppercase tracking-widest">Rasio Likuiditas Aman</div>
+                    <h2 class="text-3xl font-black text-blue-600 tabular-nums">Rp {{ number_format($totalSimpanan, 0, ',', '.') }}</h2>
+                    <div class="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-[10px] font-black bg-blue-100/50 text-blue-700 border border-blue-200 uppercase tracking-widest">Total Simpanan Anggota</div>
                 </div>
             </div>
         </div>
@@ -143,7 +143,7 @@
                 </div>
                 <span class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-amber-50 text-amber-700 text-[10px] font-black rounded-xl border border-amber-100 uppercase tracking-wide">
                     <span class="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>
-                    {{ $pengajuanMenunggu ?? 7 }} Review
+                    {{ $pengajuanMenunggu }} Review
                 </span>
             </div>
             <div class="overflow-x-auto">
@@ -182,33 +182,38 @@
             </div>
         </div>
 
-        {{-- List Log Aktivitas (Lebih Ringkas: 2 Kolom) --}}
-        <div class="lg:col-span-2 bg-white p-8 rounded-[3rem] shadow-sm border border-slate-100 relative overflow-hidden">
-            <div class="flex items-center gap-5 mb-8">
-                <div class="w-14 h-14 bg-slate-900 rounded-[1.3rem] flex items-center justify-center text-white shadow-xl shadow-slate-200 rotate-3 group hover:rotate-0 transition-transform duration-300">
-                    <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-                </div>
-                <div>
-                    <h2 class="text-xl font-black text-slate-800 tracking-tight">Log Aktivitas</h2>
-                    <p class="text-sm text-slate-400 font-medium italic">Histori singkat sistem</p>
-                </div>
-            </div>
-            
-            <div class="space-y-5">
-                @forelse ($recentLogs ?? [] as $log)
-                <div class="flex gap-3 relative">
-                    @if(!$loop->last)
-                    <div class="absolute left-2.5 top-6 bottom-[-20px] w-[1.5px] bg-slate-100"></div>
-                    @endif
-                    <div class="w-5 h-5 rounded-full bg-{{ $loop->iteration % 3 === 0 ? 'amber' : ($loop->iteration % 3 === 1 ? 'emerald' : 'blue') }}-500 border-4 border-{{ $loop->iteration % 3 === 0 ? 'amber' : ($loop->iteration % 3 === 1 ? 'emerald' : 'blue') }}-50 shrink-0 z-10"></div>
-                    <div class="text-sm">
-                        <p class="font-black text-slate-800">{{ $log->user?->name ?? 'Sistem' }}</p>
-                        <p class="text-slate-500 font-medium mt-0.5">{{ $log->description ?? $log->action }} • <span class="text-slate-400">{{ $log->created_at->diffForHumans() }}</span></p>
+        {{-- List Log Aktivitas (Dropdown) --}}
+        <div class="lg:col-span-2 bg-white rounded-[3rem] shadow-sm border border-slate-100 overflow-hidden" x-data="{ logOpen: false }">
+            <button @click="logOpen = !logOpen" class="w-full p-8 flex items-center justify-between hover:bg-slate-50/50 transition-colors text-left">
+                <div class="flex items-center gap-5">
+                    <div class="w-14 h-14 bg-slate-900 rounded-[1.3rem] flex items-center justify-center text-white shadow-xl shadow-slate-200 rotate-3 group-hover:rotate-0 transition-transform duration-300">
+                        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-black text-slate-800 tracking-tight">Log Aktivitas</h2>
+                        <p class="text-sm text-slate-400 font-medium italic">Histori singkat sistem</p>
                     </div>
                 </div>
-                @empty
-                <p class="text-slate-400 text-sm font-medium text-center py-4 italic">Belum ada aktivitas</p>
-                @endforelse
+                <svg class="w-5 h-5 text-slate-400 transition-transform duration-300 shrink-0" :class="logOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+
+            <div x-show="logOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 max-h-0" x-transition:enter-end="opacity-100 max-h-[1000px]" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 max-h-[1000px]" x-transition:leave-end="opacity-0 max-h-0" class="border-t border-slate-50 px-8 pb-8" x-cloak>
+                <div class="space-y-5 pt-6">
+                    @forelse ($recentLogs ?? [] as $log)
+                    <div class="flex gap-3 relative">
+                        @if(!$loop->last)
+                        <div class="absolute left-2.5 top-6 bottom-[-20px] w-[1.5px] bg-slate-100"></div>
+                        @endif
+                        <div class="w-5 h-5 rounded-full bg-{{ $loop->iteration % 3 === 0 ? 'amber' : ($loop->iteration % 3 === 1 ? 'emerald' : 'blue') }}-500 border-4 border-{{ $loop->iteration % 3 === 0 ? 'amber' : ($loop->iteration % 3 === 1 ? 'emerald' : 'blue') }}-50 shrink-0 z-10"></div>
+                        <div class="text-sm">
+                            <p class="font-black text-slate-800">{{ $log->user?->name ?? 'Sistem' }}</p>
+                            <p class="text-slate-500 font-medium mt-0.5">{{ $log->description ?? $log->action }} • <span class="text-slate-400">{{ $log->created_at->diffForHumans() }}</span></p>
+                        </div>
+                    </div>
+                    @empty
+                    <p class="text-slate-400 text-sm font-medium text-center py-4 italic">Belum ada aktivitas</p>
+                    @endforelse
+                </div>
             </div>
         </div>
 

@@ -6,7 +6,7 @@
 
 @section('content')
 
-<div class="px-8 py-8 bg-[#f8fafc] min-h-screen space-y-8 animate-fade-in">
+<div class="px-8 py-8 space-y-8 animate-fade-in">
 
     {{-- ================= HEADER & GREETING ================= --}}
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">

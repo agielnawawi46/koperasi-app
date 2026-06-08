@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-<div class="px-8 py-8 bg-[#f8fafc] min-h-screen space-y-8" x-data="{ openModal: false }">
+<div class="px-8 py-8 space-y-8" x-data="{ dropdown: null }">
 
     {{-- ================= Header Section ================= --}}
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -50,7 +50,7 @@
             </div>
 
             <div class="mt-8">
-                <button @click="openModal = true" class="group flex items-center gap-2 px-5 py-3.5 bg-slate-800 text-white font-bold rounded-2xl shadow-xl shadow-slate-200 hover:bg-slate-900 transition-all active:scale-95">
+                <button onclick="openPinjamanModal()" class="group flex items-center gap-2 px-5 py-3.5 bg-slate-800 text-white font-bold rounded-2xl shadow-xl shadow-slate-200 hover:bg-slate-900 transition-all active:scale-95">
                     Ajukan Pinjaman Baru
                 </button>
             </div>
@@ -95,74 +95,94 @@
     </div>
 </div>
     {{-- ================= Riwayat Pinjaman ================= --}}
-    <div class="bg-white rounded-[3rem] shadow-sm border border-slate-100 overflow-hidden animate-slide-up">
-        <div class="p-8 border-b border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-gradient-to-r from-white to-slate-50/30">
-            <div class="flex items-center gap-5">
-                <div class="w-14 h-14 bg-slate-900 rounded-[1.3rem] flex items-center justify-center text-white shadow-xl shadow-slate-200 rotate-3 group hover:rotate-0 transition-transform duration-300">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+    <div x-data="{ expanded: null }" class="space-y-4 animate-slide-up">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-2xl font-black text-slate-800">Riwayat Pinjaman</h2>
+                <p class="text-sm text-slate-400 font-medium">{{ count($riwayatPinjaman) }} pinjaman tercatat</p>
+            </div>
+        </div>
+
+        @forelse($riwayatPinjaman as $p)
+        @php
+            $statusColor = match($p->status) {
+                'paid'     => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                'rejected' => 'bg-rose-50 text-rose-700 border-rose-200',
+                'active'   => 'bg-blue-50 text-blue-700 border-blue-200',
+                'approved' => 'bg-amber-50 text-amber-700 border-amber-200',
+                'pending'  => 'bg-amber-50 text-amber-700 border-amber-200',
+                default    => 'bg-slate-50 text-slate-600 border-slate-200',
+            };
+        @endphp
+        <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden transition-all duration-300"
+             :class="expanded === {{ $p->id }} ? 'shadow-lg ring-1 ring-slate-200' : 'hover:shadow-md'">
+            <button type="button"
+                @click="expanded = expanded === {{ $p->id }} ? null : {{ $p->id }}"
+                class="w-full flex items-center justify-between p-6 text-left">
+                <div class="flex items-center gap-4 min-w-0">
+                    <div class="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center text-white font-black text-xs shrink-0">{{ $p->loan_number }}</div>
+                    <div class="min-w-0">
+                        <p class="font-black text-slate-800 tabular-nums">Rp {{ number_format($p->amount) }}</p>
+                        <p class="text-[10px] font-bold text-slate-400 mt-0.5">{{ $p->created_at->format('d M Y') }} &middot; {{ $p->tenure_months }} Bulan</p>
+                    </div>
                 </div>
-                <div>
-                    <h2 class="text-xl font-black text-slate-800 tracking-tight">Riwayat Pinjaman</h2>
-                    <p class="text-sm text-slate-400 font-medium italic">Daftar pinjaman yang pernah diajukan.</p>
+                <div class="flex items-center gap-4 shrink-0">
+                    <span class="inline-flex items-center gap-1.5 text-[9px] font-black rounded-lg uppercase tracking-wide px-2 py-0.5 border {{ $statusColor }}">
+                        <span class="w-1.5 h-1.5 rounded-full {{ $p->status === 'pending' || $p->status === 'approved' || $p->status === 'active' ? 'bg-amber-500 animate-ping' : ($p->status === 'paid' ? 'bg-emerald-500' : 'bg-slate-400') }}"></span>
+                        {{ ucfirst($p->status) }}
+                    </span>
+                    <svg class="w-5 h-5 text-slate-300 transition-transform duration-300 shrink-0"
+                         :class="expanded === {{ $p->id }} ? 'rotate-180' : ''"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </div>
+            </button>
+
+            <div x-show="expanded === {{ $p->id }}" x-cloak
+                 x-transition:enter="transition-all duration-300 ease-out"
+                 x-transition:enter-start="opacity-0 max-h-0 overflow-hidden"
+                 x-transition:enter-end="opacity-100 max-h-96"
+                 class="border-t border-slate-50">
+                <div class="p-6 bg-slate-50/30 space-y-4">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div>
+                            <p class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">No. Berkas</p>
+                            <p class="text-sm font-black text-slate-800">{{ $p->loan_number }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Tanggal Pinjam</p>
+                            <p class="text-sm font-black text-slate-800">{{ $p->created_at->format('d M Y') }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Tenor</p>
+                            <p class="text-sm font-black text-slate-800">{{ $p->tenure_months }} Bulan</p>
+                        </div>
+                        <div>
+                            <p class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Total Pinjaman</p>
+                            <p class="text-sm font-black text-indigo-600 tabular-nums">Rp {{ number_format($p->amount) }}</p>
+                        </div>
+                    </div>
+                    <div class="pt-3 border-t border-slate-100">
+                        <a href="{{ route('anggota.angsuran') }}"
+                           class="inline-flex items-center gap-2 px-6 py-3 bg-slate-800 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-blue-600 transition-all shadow-lg active:scale-95">
+                            Detail Angsuran
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead>
-                    <tr class="bg-slate-50/50">
-                        <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">No. Berkas</th>
-                        <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Tanggal Pinjam</th>
-                        <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Total Pinjaman</th>
-                        <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Tenor</th>
-                        <th class="px-8 py-5 text-center text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Status</th>
-                        <th class="px-8 py-5 text-right text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-50">
-                    @forelse($riwayatPinjaman as $p)
-                    <tr class="group hover:bg-blue-50/30 transition-all duration-300">
-                        <td class="px-8 py-7 text-sm font-black text-slate-800">{{ $p->loan_number }}</td>
-                        <td class="px-8 py-7 text-sm font-bold text-slate-500">{{ $p->created_at->format('d M Y') }}</td>
-                        <td class="px-8 py-7 text-sm font-black text-slate-800 tabular-nums">Rp {{ number_format($p->amount) }}</td>
-                        <td class="px-8 py-7 text-sm font-bold text-slate-500">{{ $p->tenure_months }} Bulan</td>
-                        <td class="px-8 py-7 text-center">
-                            <span class="inline-flex items-center gap-1.5 px-4 py-1.5 {{ $p->status === 'active' || $p->status === 'approved' ? 'bg-amber-50 text-amber-700 border-amber-100' : ($p->status === 'paid' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-slate-50 text-slate-700 border-slate-100') }} text-[10px] font-black rounded-xl border uppercase tracking-wide">
-                                <span class="w-1.5 h-1.5 {{ $p->status === 'active' || $p->status === 'approved' ? 'bg-amber-500 animate-pulse' : ($p->status === 'paid' ? 'bg-emerald-500' : 'bg-slate-500') }} rounded-full"></span>
-                                {{ ucfirst($p->status) }}
-                            </span>
-                        </td>
-                        <td class="px-8 py-7 text-right">
-                            <a href="{{ route('anggota.angsuran') }}" class="px-6 py-3 bg-white border border-slate-200 text-slate-600 text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-slate-50 transition-all shadow-sm">Detail</a>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="6" class="px-8 py-12 text-center font-bold text-slate-400 italic">Belum ada pinjaman.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+        @empty
+        <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 p-16 text-center">
+            <p class="font-bold text-slate-400 italic">Belum ada pinjaman.</p>
         </div>
+        @endforelse
     </div>
 
     {{-- ================= Popup Ajukan Pinjaman (Modal) ================= --}}
-    <div x-show="openModal" 
-         class="fixed inset-0 z-[99] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0"
-         x-cloak>
-        
-        <div class="bg-white w-full max-w-lg rounded-[3rem] shadow-2xl p-10 border border-slate-100 relative overflow-hidden"
-             @click.away="openModal = false"
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="scale-95 translate-y-10"
-             x-transition:enter-end="scale-100 translate-y-0">
+    <div id="modalPinjaman" class="fixed inset-0 z-[99] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all duration-300 hidden">
+        <div class="bg-white w-full max-w-lg rounded-[3rem] shadow-2xl p-10 border border-slate-100 relative overflow-hidden transform transition-all duration-300 scale-95 translate-y-8">
             
             <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -z-0"></div>
 
@@ -172,7 +192,7 @@
                         <h3 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Form Pengajuan</h3>
                         <p class="text-[10px] text-blue-600 font-black uppercase tracking-widest mt-1">Pinjaman Dana Karya Baru</p>
                     </div>
-                    <button @click="openModal = false" class="text-slate-300 hover:text-rose-500 transition-colors">
+                    <button onclick="closePinjamanModal()" class="text-slate-300 hover:text-rose-500 transition-colors">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -197,11 +217,18 @@
                                 <option value="24">24 Bulan</option>
                             </select>
                         </div>
-                        <div>
-                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block">Keperluan</label>
-                            <input type="text" name="purpose" class="w-full bg-slate-50 border-none rounded-2xl px-4 py-4 text-sm font-black text-slate-700 focus:ring-2 focus:ring-blue-500" placeholder="e.g. Pendidikan" required>
-                        </div>
+                    <div>
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block">Keperluan</label>
+                        <input type="text" name="purpose" class="w-full bg-slate-50 border-none rounded-2xl px-4 py-4 text-sm font-black text-slate-700 focus:ring-2 focus:ring-blue-500" placeholder="e.g. Pendidikan" required>
                     </div>
+                    <div class="col-span-2">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block">Metode Pembayaran</label>
+                        <select name="payment_method" class="w-full bg-slate-50 border-none rounded-2xl px-4 py-4 text-sm font-black text-slate-700 focus:ring-2 focus:ring-blue-500">
+                            <option value="transfer_bank">Transfer Bank</option>
+                            <option value="bayar_langsung">Bayar Langsung ke Pengurus</option>
+                        </select>
+                    </div>
+                </div>
 
                     <div class="bg-blue-50/50 p-6 rounded-3xl border border-blue-100 flex items-center gap-4">
                         <div class="p-3 bg-white rounded-2xl text-blue-600 shadow-sm">
@@ -228,6 +255,31 @@
         </div>
     </div>
 </div>
+
+<script>
+function openPinjamanModal() {
+    const modal = document.getElementById('modalPinjaman');
+    const content = modal.querySelector('div');
+    modal.classList.remove('hidden');
+    requestAnimationFrame(() => {
+        content.classList.remove('scale-95', 'translate-y-8');
+        content.classList.add('scale-100', 'translate-y-0');
+    });
+}
+function closePinjamanModal() {
+    const modal = document.getElementById('modalPinjaman');
+    const content = modal.querySelector('div');
+    content.classList.remove('scale-100', 'translate-y-0');
+    content.classList.add('scale-95', 'translate-y-8');
+    setTimeout(() => modal.classList.add('hidden'), 300);
+}
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('modalPinjaman');
+    if (!modal.classList.contains('hidden') && event.target === modal) {
+        closePinjamanModal();
+    }
+});
+</script>
 
 <style>
     @keyframes fade-in { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }

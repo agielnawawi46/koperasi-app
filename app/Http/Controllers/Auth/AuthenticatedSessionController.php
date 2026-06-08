@@ -27,29 +27,29 @@ class AuthenticatedSessionController extends Controller
 
         try {
             if ($user->hasRole('super_admin')) {
-                return redirect()->intended(route('super-admin.dashboard'));
+                return redirect()->route('super-admin.dashboard');
             }
 
             if ($user->hasRole('admin')) {
-                return redirect()->intended(route('admin.dashboard'));
+                return redirect()->route('admin.dashboard');
             }
 
             if ($user->hasRole('anggota')) {
-                return redirect()->intended(route('anggota.dashboard'));
+                return redirect()->route('anggota.dashboard');
             }
 
             if ($user->hasRole('pengurus')) {
-                return redirect()->intended(route('pengurus.dashboard'));
+                return redirect()->route('pengurus.dashboard');
             }
 
             if ($user->hasRole('pengawas')) {
-                return redirect()->intended(route('pengawas.dashboard'));
+                return redirect()->route('pengawas.dashboard');
             }
         } catch (RoleDoesNotExist $e) {
-            return redirect()->intended(route('dashboard', absolute: false));
+            return redirect()->route('dashboard');
         }
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->route('dashboard');
     }
 
     public function destroy(Request $request): RedirectResponse

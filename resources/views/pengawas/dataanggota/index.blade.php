@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-<div class="px-8 py-8 bg-[#f8fafc] min-h-screen space-y-8 animate-fade-in">
+<div class="px-8 py-8 space-y-8 animate-fade-in">
     <div>
         <h1 class="text-3xl font-black text-slate-800 tracking-tight">Data Anggota</h1>
         <p class="text-slate-500 font-medium">Daftar anggota aktif untuk tujuan pengawasan sistem.</p>

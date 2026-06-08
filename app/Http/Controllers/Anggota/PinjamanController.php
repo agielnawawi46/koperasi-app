@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Anggota;
 use App\Http\Controllers\Controller;
 use App\Models\Installment;
 use App\Models\Loan;
+use App\Models\Organization;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -70,10 +71,11 @@ class PinjamanController extends Controller
             'amount' => 'required|numeric|min:100000',
             'purpose' => 'required|string|max:500',
             'tenure_months' => 'required|integer|min:3|max:60',
+            'payment_method' => 'nullable|string|in:transfer_bank,bayar_langsung',
         ]);
 
         $user = Auth::user();
-        $organization = \App\Models\Organization::first();
+        $organization = Organization::first();
         $bungaRate = $organization?->bunga_rate ?? 0.8;
 
         $totalBunga = $request->amount * ($bungaRate / 100) * $request->tenure_months;
@@ -81,7 +83,7 @@ class PinjamanController extends Controller
         $monthlyPayment = $totalPayment / $request->tenure_months;
 
         $loan = Loan::create([
-            'loan_number' => 'PJM-' . now()->format('Ymd') . '-' . str_pad((string)(Loan::max('id') + 1), 4, '0', STR_PAD_LEFT),
+            'loan_number' => 'PJM-'.now()->format('Ymd').'-'.str_pad((string) (Loan::max('id') + 1), 4, '0', STR_PAD_LEFT),
             'user_id' => $user->id,
             'amount' => $request->amount,
             'interest_rate' => $bungaRate,
@@ -90,6 +92,7 @@ class PinjamanController extends Controller
             'total_interest' => $totalBunga,
             'total_payment' => $totalPayment,
             'purpose' => $request->purpose,
+            'payment_method' => $request->payment_method ?? 'transfer_bank',
             'status' => 'pending',
         ]);
 

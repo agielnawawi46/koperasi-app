@@ -19,6 +19,7 @@ class Loan extends Model
         'total_payment',
         'status',
         'purpose',
+        'payment_method',
         'approved_by',
         'approved_at',
         'notes',

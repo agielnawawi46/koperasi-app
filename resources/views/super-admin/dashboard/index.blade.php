@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-<div class="px-8 py-8 bg-[#f8fafc] min-h-screen space-y-8 animate-fade-in">
+<div class="px-8 py-8 space-y-8 animate-fade-in">
 
     @if (session('status'))
         <div class="bg-emerald-50 border border-emerald-200 rounded-2xl px-6 py-4 text-emerald-700 text-sm font-black shadow-sm flex items-center gap-3">

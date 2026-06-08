@@ -20,5 +20,8 @@ class Organization extends Model
         'phone',
         'website',
         'logo',
+        'bank_name',
+        'bank_account_name',
+        'bank_account_number',
     ];
 }
