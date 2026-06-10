@@ -106,12 +106,23 @@
         @forelse($riwayatPinjaman as $p)
         @php
             $statusColor = match($p->status) {
-                'paid'     => 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                'rejected' => 'bg-rose-50 text-rose-700 border-rose-200',
-                'active'   => 'bg-blue-50 text-blue-700 border-blue-200',
-                'approved' => 'bg-amber-50 text-amber-700 border-amber-200',
-                'pending'  => 'bg-amber-50 text-amber-700 border-amber-200',
-                default    => 'bg-slate-50 text-slate-600 border-slate-200',
+                'paid'                   => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                'rejected'               => 'bg-rose-50 text-rose-700 border-rose-200',
+                'active'                 => 'bg-blue-50 text-blue-700 border-blue-200',
+                'ready_for_disbursement' => 'bg-purple-50 text-purple-700 border-purple-200',
+                'approved'               => 'bg-amber-50 text-amber-700 border-amber-200',
+                'pending'                => 'bg-amber-50 text-amber-700 border-amber-200',
+                default                  => 'bg-slate-50 text-slate-600 border-slate-200',
+            };
+
+            $statusLabel = match($p->status) {
+                'paid'                   => 'Lunas',
+                'rejected'               => 'Ditolak',
+                'active'                 => 'Aktif',
+                'ready_for_disbursement' => 'Siap Cair',
+                'approved'               => 'Disetujui',
+                'pending'                => 'Menunggu',
+                default                  => ucfirst($p->status),
             };
         @endphp
         <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden transition-all duration-300"
@@ -128,8 +139,8 @@
                 </div>
                 <div class="flex items-center gap-4 shrink-0">
                     <span class="inline-flex items-center gap-1.5 text-[9px] font-black rounded-lg uppercase tracking-wide px-2 py-0.5 border {{ $statusColor }}">
-                        <span class="w-1.5 h-1.5 rounded-full {{ $p->status === 'pending' || $p->status === 'approved' || $p->status === 'active' ? 'bg-amber-500 animate-ping' : ($p->status === 'paid' ? 'bg-emerald-500' : 'bg-slate-400') }}"></span>
-                        {{ ucfirst($p->status) }}
+                        <span class="w-1.5 h-1.5 rounded-full {{ $p->status === 'pending' || $p->status === 'approved' || $p->status === 'active' ? 'bg-amber-500 animate-ping' : ($p->status === 'ready_for_disbursement' ? 'bg-purple-500 animate-pulse' : ($p->status === 'paid' ? 'bg-emerald-500' : 'bg-slate-400')) }}"></span>
+                        {{ $statusLabel }}
                     </span>
                     <svg class="w-5 h-5 text-slate-300 transition-transform duration-300 shrink-0"
                          :class="expanded === {{ $p->id }} ? 'rotate-180' : ''"

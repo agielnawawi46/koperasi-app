@@ -10,13 +10,13 @@ class AuditPinjamanController extends Controller
 {
     public function index(): View
     {
-        $outstanding = Loan::whereIn('status', ['approved', 'active'])->sum('amount');
+        $outstanding = Loan::whereIn('status', ['approved', 'ready_for_disbursement', 'active'])->sum('amount');
 
         $stats = [
             ['name' => 'Plafon Cair', 'count' => Loan::whereIn('status', ['active', 'paid'])->count()],
             ['name' => 'Permohonan Baru', 'count' => Loan::where('status', 'pending')->count()],
             ['name' => 'Ditolak', 'count' => Loan::where('status', 'rejected')->count()],
-            ['name' => 'Menunggu Persetujuan', 'count' => Loan::where('status', 'approved')->count()],
+            ['name' => 'Menunggu Pencairan', 'count' => Loan::whereIn('status', ['approved', 'ready_for_disbursement'])->count()],
         ];
 
         $auditPinjaman = Loan::with('user')
@@ -31,6 +31,7 @@ class AuditPinjamanController extends Controller
                     'status_audit' => match ($loan->status) {
                         'pending' => 'Menunggu',
                         'approved' => 'Disetujui',
+                        'ready_for_disbursement' => 'Siap Cair',
                         'active' => 'Aktif',
                         'rejected' => 'Ditolak',
                         'paid' => 'Lunas',

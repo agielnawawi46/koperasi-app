@@ -26,7 +26,7 @@ class LoanSeeder extends Seeder
             $totalPayment = $amount + $totalInterest;
             $monthlyPayment = $totalPayment / $tenure;
 
-            $statuses = ['active', 'active', 'active', 'paid', 'paid', 'pending', 'approved', 'approved'];
+            $statuses = ['active', 'active', 'active', 'paid', 'paid', 'pending', 'approved', 'ready_for_disbursement'];
             $status = $statuses[$index % count($statuses)];
 
             $loan = Loan::create([

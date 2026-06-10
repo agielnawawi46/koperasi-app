@@ -18,7 +18,7 @@ return new class extends Migration
             $table->decimal('monthly_payment', 15, 2)->default(0);
             $table->decimal('total_interest', 15, 2)->default(0);
             $table->decimal('total_payment', 15, 2)->default(0);
-            $table->string('status', 20)->default('pending'); // pending, approved, rejected, active, paid
+            $table->string('status', 20)->default('pending'); // pending, approved, ready_for_disbursement, rejected, active, paid
             $table->text('purpose')->nullable();
             $table->foreignId('approved_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('approved_at')->nullable();

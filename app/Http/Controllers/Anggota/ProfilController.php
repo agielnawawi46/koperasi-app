@@ -18,7 +18,7 @@ class ProfilController extends Controller
         $user = auth()->user();
 
         $totalSimpanan = Saving::where('user_id', $user->id)->sum('balance');
-        $totalPinjaman = Loan::where('user_id', $user->id)->whereIn('status', ['active', 'approved'])->sum('amount');
+        $totalPinjaman = Loan::where('user_id', $user->id)->whereIn('status', ['active', 'approved', 'ready_for_disbursement'])->sum('amount');
         $totalTransaksi = ActivityLog::where('user_id', $user->id)->count();
 
         return view('anggota.profil.index', compact(

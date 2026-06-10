@@ -18,7 +18,7 @@ class PinjamanController extends Controller
         $user = auth()->user();
 
         $pinjamanAktif = Loan::where('user_id', $user->id)
-            ->whereIn('status', ['approved', 'active'])
+            ->whereIn('status', ['approved', 'ready_for_disbursement', 'active'])
             ->first();
 
         $sisaHutang = 0;
@@ -81,7 +81,7 @@ class PinjamanController extends Controller
 
         // Rule: existing active loan check
         $activeLoan = Loan::where('user_id', $user->id)
-            ->whereIn('status', ['pending', 'approved', 'active'])
+            ->whereIn('status', ['pending', 'approved', 'ready_for_disbursement', 'active'])
             ->exists();
         if ($activeLoan) {
             return back()->with('error', 'Anda masih memiliki pinjaman yang belum diselesaikan.')->withInput();

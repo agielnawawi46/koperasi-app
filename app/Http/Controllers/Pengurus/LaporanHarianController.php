@@ -94,7 +94,7 @@ class LaporanHarianController extends Controller
 
         $totalAnggota = User::role('anggota')->count();
         $totalSimpanan = Saving::sum('balance');
-        $totalOutstanding = Loan::whereIn('status', ['approved', 'active'])->sum('total_payment');
+        $totalOutstanding = Loan::whereIn('status', ['approved', 'ready_for_disbursement', 'active'])->sum('total_payment');
 
         $pendingSimpanan = SavingsTransaction::with(['user', 'savingAccount'])
             ->where('status', 'pending')

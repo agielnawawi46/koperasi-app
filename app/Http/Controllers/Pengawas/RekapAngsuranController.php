@@ -18,7 +18,7 @@ class RekapAngsuranController extends Controller
         $totalAktif = Installment::count();
 
         $daftarAngsuran = Loan::with('user', 'installments')
-            ->whereIn('status', ['active', 'approved', 'paid'])
+            ->whereIn('status', ['active', 'approved', 'ready_for_disbursement', 'paid'])
             ->get()
             ->flatMap(function ($loan) {
                 return $loan->installments->map(function ($inst) use ($loan) {

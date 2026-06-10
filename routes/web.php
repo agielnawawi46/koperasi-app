@@ -138,6 +138,7 @@ Route::prefix('pengurus')->as('pengurus.')->middleware(['auth', 'role.redirect']
     Route::post('/kelpinjaman', [KelolaPinjamanController::class, 'store'])->name('kelpinjaman.store');
     Route::post('/kelpinjaman/{loan}/approve', [KelolaPinjamanController::class, 'approve'])->name('kelpinjaman.approve');
     Route::post('/kelpinjaman/{loan}/reject', [KelolaPinjamanController::class, 'reject'])->name('kelpinjaman.reject');
+    Route::post('/kelpinjaman/{loan}/ready', [KelolaPinjamanController::class, 'readyForDisbursement'])->name('kelpinjaman.ready');
     Route::post('/kelpinjaman/{loan}/cairkan', [KelolaPinjamanController::class, 'cairkan'])->name('kelpinjaman.cairkan');
     Route::get('/inpangsuran', [InputAngsuranController::class, 'index'])->name('inpangsuran');
     Route::get('/inpangsuran/data/{loan}', [InputAngsuranController::class, 'getDataPinjaman'])->name('inpangsuran.data');

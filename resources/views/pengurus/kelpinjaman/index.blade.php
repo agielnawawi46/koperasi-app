@@ -49,11 +49,13 @@
 
             <div class="space-y-2">
                 <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Status Pinjaman</label>
-                <select class="w-full bg-slate-100/50 border-none rounded-xl px-4 py-3 text-xs font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 transition-all appearance-none cursor-pointer">
-                    <option value="">Semua Status</option>
-                    <option value="pending">Waiting Review</option>
-                    <option value="active">Active</option>
-                </select>
+                    <select class="w-full bg-slate-100/50 border-none rounded-xl px-4 py-3 text-xs font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 transition-all appearance-none cursor-pointer">
+                        <option value="">Semua Status</option>
+                        <option value="pending">Waiting Review</option>
+                        <option value="approved">Disetujui</option>
+                        <option value="ready_for_disbursement">Siap Cair</option>
+                        <option value="active">Active</option>
+                    </select>
             </div>
 
             <div class="space-y-2">
@@ -150,18 +152,20 @@
         @forelse($pinjaman as $p)
         @php
             $statusColors = [
-                'pending'  => 'bg-amber-50 text-amber-700 border-amber-200',
-                'approved' => 'bg-blue-50 text-blue-700 border-blue-200',
-                'active'   => 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                'rejected' => 'bg-rose-50 text-rose-700 border-rose-200',
-                'paid'     => 'bg-slate-50 text-slate-700 border-slate-200',
+                'pending'               => 'bg-amber-50 text-amber-700 border-amber-200',
+                'approved'              => 'bg-blue-50 text-blue-700 border-blue-200',
+                'ready_for_disbursement' => 'bg-purple-50 text-purple-700 border-purple-200',
+                'active'                => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                'rejected'              => 'bg-rose-50 text-rose-700 border-rose-200',
+                'paid'                  => 'bg-slate-50 text-slate-700 border-slate-200',
             ];
             $statusLabels = [
-                'pending'  => 'Waiting Review',
-                'approved' => 'Disetujui',
-                'active'   => 'Aktif',
-                'rejected' => 'Ditolak',
-                'paid'     => 'Lunas',
+                'pending'               => 'Waiting Review',
+                'approved'              => 'Disetujui',
+                'ready_for_disbursement' => 'Siap Cair',
+                'active'                => 'Aktif',
+                'rejected'              => 'Ditolak',
+                'paid'                  => 'Lunas',
             ];
         @endphp
         <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden transition-all duration-300"
@@ -182,7 +186,7 @@
                     <div class="text-right">
                         <p class="text-base font-black text-slate-800 tabular-nums">Rp {{ number_format($p->amount) }}</p>
                         <span class="inline-flex items-center gap-1.5 text-[9px] font-black rounded-lg uppercase tracking-wide px-2 py-0.5 {{ $statusColors[$p->status] ?? 'bg-slate-50 text-slate-600 border-slate-200' }}">
-                            <span class="w-1.5 h-1.5 rounded-full {{ $p->status === 'pending' ? 'bg-amber-500 animate-ping' : ($p->status === 'active' ? 'bg-emerald-500' : 'bg-slate-400') }}"></span>
+                            <span class="w-1.5 h-1.5 rounded-full {{ $p->status === 'pending' ? 'bg-amber-500 animate-ping' : ($p->status === 'ready_for_disbursement' ? 'bg-purple-500 animate-pulse' : ($p->status === 'active' ? 'bg-emerald-500' : 'bg-slate-400')) }}"></span>
                             {{ $statusLabels[$p->status] ?? ucfirst($p->status) }}
                         </span>
                     </div>
@@ -239,6 +243,21 @@
                         </form>
                     </div>
                     @elseif($p->status === 'approved')
+                    <div class="flex gap-3 pt-2 border-t border-slate-100">
+                        <form action="{{ route('pengurus.kelpinjaman.ready', $p) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="px-6 py-3 bg-purple-600 text-white text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-purple-700 transition-all shadow-lg shadow-purple-200 active:scale-95">
+                                Tandai Siap Cair
+                            </button>
+                        </form>
+                        <form action="{{ route('pengurus.kelpinjaman.cairkan', $p) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="px-6 py-3 bg-blue-600 text-white text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 active:scale-95">
+                                Cairkan Dana
+                            </button>
+                        </form>
+                    </div>
+                    @elseif($p->status === 'ready_for_disbursement')
                     <div class="flex gap-3 pt-2 border-t border-slate-100">
                         <form action="{{ route('pengurus.kelpinjaman.cairkan', $p) }}" method="POST">
                             @csrf

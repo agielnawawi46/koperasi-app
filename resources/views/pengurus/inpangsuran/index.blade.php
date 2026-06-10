@@ -72,7 +72,7 @@
                                             <div class="ml-auto shrink-0">
                                                 <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 text-[9px] font-black rounded-lg border border-blue-100">
                                                     <span class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
-                                                    <span x-text="loan.status === 'active' ? 'Aktif' : 'Disetujui'"></span>
+                                                    <span x-text="loan.status === 'active' ? 'Aktif' : (loan.status === 'ready_for_disbursement' ? 'Siap Cair' : 'Disetujui')"></span>
                                                 </span>
                                             </div>
                                         </button>

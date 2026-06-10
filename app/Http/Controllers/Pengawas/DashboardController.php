@@ -20,7 +20,7 @@ class DashboardController extends Controller
         $sistemStatus = 'Normal';
 
         $totalSimpanan = Saving::sum('balance');
-        $totalPinjaman = Loan::whereIn('status', ['active', 'approved'])->sum('amount');
+        $totalPinjaman = Loan::whereIn('status', ['active', 'approved', 'ready_for_disbursement'])->sum('amount');
 
         return view('pengawas.dashboard.index', compact(
             'totalTransaksiSelesai', 'laporanBulananAktif', 'sistemStatus',

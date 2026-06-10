@@ -18,8 +18,8 @@ class DashboardController extends Controller
 
         $loanStats = Loan::selectRaw("
             COALESCE(SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END), 0) as pengajuan_pending,
-            COALESCE(SUM(CASE WHEN status IN ('active','approved') THEN 1 ELSE 0 END), 0) as pinjaman_aktif,
-            COALESCE(SUM(CASE WHEN status IN ('active','approved') THEN total_payment ELSE 0 END), 0) as total_outstanding
+            COALESCE(SUM(CASE WHEN status IN ('active','approved','ready_for_disbursement') THEN 1 ELSE 0 END), 0) as pinjaman_aktif,
+            COALESCE(SUM(CASE WHEN status IN ('active','approved','ready_for_disbursement') THEN total_payment ELSE 0 END), 0) as total_outstanding
         ")->first();
 
         $pengajuanPending = $loanStats->pengajuan_pending;

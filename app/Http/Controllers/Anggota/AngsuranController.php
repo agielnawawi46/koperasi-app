@@ -19,7 +19,7 @@ class AngsuranController extends Controller
         $user = auth()->user();
 
         $pinjamanAktif = Loan::where('user_id', $user->id)
-            ->whereIn('status', ['approved', 'active'])
+            ->whereIn('status', ['approved', 'ready_for_disbursement', 'active'])
             ->first();
 
         $tagihanBulanIni = 0;

@@ -15,12 +15,12 @@ class KelolaPinjamanController extends Controller
 {
     public function index(): View
     {
-        $totalOutstanding = Loan::whereIn('status', ['approved', 'active'])->sum('total_payment');
+        $totalOutstanding = Loan::whereIn('status', ['approved', 'ready_for_disbursement', 'active'])->sum('total_payment');
         $perluReview = Loan::where('status', 'pending')->count();
-        $estimasiCicilan = Loan::whereIn('status', ['approved', 'active'])->sum('monthly_payment');
+        $estimasiCicilan = Loan::whereIn('status', ['approved', 'ready_for_disbursement', 'active'])->sum('monthly_payment');
 
         $pinjaman = Loan::with('user')
-            ->orderByRaw("FIELD(status, 'pending', 'approved', 'active', 'rejected', 'paid')")
+            ->orderByRaw("FIELD(status, 'pending', 'approved', 'ready_for_disbursement', 'active', 'rejected', 'paid')")
             ->latest()
             ->get();
 
@@ -46,7 +46,7 @@ class KelolaPinjamanController extends Controller
 
         // Rule: existing active loan check
         $activeLoan = Loan::where('user_id', $request->user_id)
-            ->whereIn('status', ['pending', 'approved', 'active'])
+            ->whereIn('status', ['pending', 'approved', 'ready_for_disbursement', 'active'])
             ->exists();
         if ($activeLoan) {
             return back()->with('error', 'Anggota masih memiliki pinjaman yang belum diselesaikan.')->withInput();
@@ -122,7 +122,7 @@ class KelolaPinjamanController extends Controller
         // Rule: existing active loan check (excluding current loan)
         $activeLoan = Loan::where('user_id', $member->id)
             ->where('id', '!=', $loan->id)
-            ->whereIn('status', ['pending', 'approved', 'active'])
+            ->whereIn('status', ['pending', 'approved', 'ready_for_disbursement', 'active'])
             ->exists();
         if ($activeLoan) {
             return back()->with('error', 'Anggota masih memiliki pinjaman lain yang belum diselesaikan.');
@@ -197,9 +197,30 @@ class KelolaPinjamanController extends Controller
         return redirect()->route('pengurus.kelpinjaman')->with('success', 'Pinjaman ditolak.');
     }
 
-    public function cairkan(Loan $loan, Request $request)
+    public function readyForDisbursement(Loan $loan, Request $request)
     {
         if ($loan->status !== 'approved') {
+            return back()->with('error', 'Pinjaman harus disetujui terlebih dahulu.');
+        }
+
+        $loan->update([
+            'status' => 'ready_for_disbursement',
+        ]);
+
+        ActivityLog::create([
+            'user_id' => $request->user()->id,
+            'action' => 'ready_disburse_loan',
+            'description' => 'Menandai pinjaman siap cair: '.$loan->loan_number,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
+        return redirect()->route('pengurus.kelpinjaman')->with('success', 'Pinjaman siap untuk dicairkan!');
+    }
+
+    public function cairkan(Loan $loan, Request $request)
+    {
+        if (!in_array($loan->status, ['approved', 'ready_for_disbursement'])) {
             return back()->with('error', 'Pinjaman harus disetujui terlebih dahulu.');
         }
 

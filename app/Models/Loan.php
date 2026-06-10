@@ -8,6 +8,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Loan extends Model
 {
+    const STATUS_PENDING = 'pending';
+    const STATUS_APPROVED = 'approved';
+    const STATUS_READY_FOR_DISBURSEMENT = 'ready_for_disbursement';
+    const STATUS_ACTIVE = 'active';
+    const STATUS_REJECTED = 'rejected';
+    const STATUS_PAID = 'paid';
+
     protected $fillable = [
         'loan_number',
         'user_id',

@@ -14,7 +14,7 @@ class InputAngsuranController extends Controller
     public function index(): View
     {
         $pinjamanAktif = Loan::with('user')
-            ->whereIn('status', ['approved', 'active'])
+            ->whereIn('status', ['approved', 'ready_for_disbursement', 'active'])
             ->get();
 
         $loanList = $pinjamanAktif->map(fn ($l) => [

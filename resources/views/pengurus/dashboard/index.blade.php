@@ -143,9 +143,9 @@
                         </td>
                         <td class="px-8 py-6 text-sm font-bold text-slate-600 tracking-tight">{{ $p->tenure_months }} <span class="text-[10px] text-slate-400 uppercase">Bulan</span></td>
                         <td class="px-8 py-6">
-                            <span class="inline-flex items-center gap-1.5 px-4 py-1.5 {{ $p->status === 'pending' ? 'bg-amber-50 text-amber-700 border-amber-100' : 'bg-emerald-50 text-emerald-700 border-emerald-100' }} text-[10px] font-black rounded-xl border uppercase tracking-wide">
-                                <span class="w-1.5 h-1.5 {{ $p->status === 'pending' ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500' }} rounded-full"></span>
-                                {{ $p->status === 'pending' ? 'Menunggu Review' : ucfirst($p->status) }}
+                            <span class="inline-flex items-center gap-1.5 px-4 py-1.5 {{ $p->status === 'pending' ? 'bg-amber-50 text-amber-700 border-amber-100' : ($p->status === 'ready_for_disbursement' ? 'bg-purple-50 text-purple-700 border-purple-200' : 'bg-emerald-50 text-emerald-700 border-emerald-100') }} text-[10px] font-black rounded-xl border uppercase tracking-wide">
+                                <span class="w-1.5 h-1.5 {{ $p->status === 'pending' ? 'bg-amber-500 animate-pulse' : ($p->status === 'ready_for_disbursement' ? 'bg-purple-500 animate-pulse' : 'bg-emerald-500') }} rounded-full"></span>
+                                {{ $p->status === 'pending' ? 'Menunggu Review' : ($p->status === 'ready_for_disbursement' ? 'Siap Cair' : ucfirst($p->status)) }}
                             </span>
                         </td>
                         <td class="px-8 py-6 text-center">
